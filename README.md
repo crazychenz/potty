@@ -42,7 +42,7 @@ This project uses Agile methodologies and a variant of Scrum to manage all work.
 
 ### Current Development Process
 
-* Sprints will last 14 calendar days starting on 2/15/2020.
+* Sprints will last (roughly 12 hours across) 14 calendar days starting on 2/15/2020.
 
 * <!-- RUBRIC: Review / Retrospectives --> Previous sprint review and retrospectives will occur on the first day of the next sprint.
 
@@ -65,6 +65,8 @@ This project uses Agile methodologies and a variant of Scrum to manage all work.
 
 * <!-- RUBRIC: Release Plan --> Releases will be made at the end of each sprint. A release is composed of a tagged source code repository and a binary release of the product. Initially, all releases will be built only for Windows. Subsequent Sprints may include more platform releases.
 
+* [Sprint Burndown Data](https://docs.google.com/spreadsheets/d/1NCjjhDnDJFOeivIgI7Wzn4YoHZ-kbNvl8garX6dcz3Q/edit?usp=sharing)
+
 ### Definition Of Done
 
 <!-- RUBRIC:Definition Of Done -->
@@ -73,4 +75,14 @@ This project uses Agile methodologies and a variant of Scrum to manage all work.
 * Acceptance Criteria Satisfied
 * Regression Tests Passed
 * Code Committed
+
+<!-- TODO: -->
+
+<!--   Product Backlog Burndown -->
+
+<!--   Sprint Backlog Burndown -->
+
+
+
+
 
