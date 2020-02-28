@@ -1,3 +1,16 @@
-[gd_scene format=2]
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://View.gd" type="Script" id=1]
+[ext_resource path="res://Model.gd" type="Script" id=2]
+[ext_resource path="res://Control.gd" type="Script" id=3]
 
 [node name="Main" type="Node"]
+
+[node name="Control" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="Model" type="Node" parent="Control"]
+script = ExtResource( 2 )
+
+[node name="View" type="Node2D" parent="Control/Model"]
+script = ExtResource( 1 )
