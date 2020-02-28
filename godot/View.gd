@@ -36,6 +36,8 @@ func update_view() -> void:
         for y in range(model.GRID_ROWS):
             if not model.grid.is_empty(x, y):
                 add_position(x, y, model.grid.get_position(x, y))
+            else:
+                add_position(x, y, model.NULL_TYPE)
 
 
 
