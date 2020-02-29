@@ -7,14 +7,15 @@ onready var board_offset := Vector2(50, 50)
 func create_sprite_with_texture(texture) -> Sprite:
     var obj = Sprite.new()
     obj.texture = texture
-    obj.set_scale(Vector2(0.2, 0.2))
+    obj.set_scale(Vector2(0.5, 0.5))
     return obj
 
 func add_position(x : int, y : int, obj_type : String) -> void:
     var obj
+
     match obj_type:
-        "FloorTile1":
-            obj = create_sprite_with_texture(load("res://assets/FloorTile1.png"))
+        "NULL":
+            obj = create_sprite_with_texture(load("res://assets/tiles/grass.png"))
         "white":
             obj = create_sprite_with_texture(load("res://assets/white.png"))
         "PipeDownRight":
@@ -24,7 +25,7 @@ func add_position(x : int, y : int, obj_type : String) -> void:
             # do nothing
             return
 
-    obj.set_position(Vector2((x * 50), (y * 50)) + board_offset)
+    obj.set_position(Vector2((x * 64), (y * 64)) + board_offset)
     add_child(obj)
 
 func update_view() -> void:
@@ -39,7 +40,7 @@ func update_view() -> void:
             if not model.grid.is_empty(x, y):
                 add_position(x, y, model.grid.get_position(x, y))
             else:
-                add_position(x, y, model.NULL_TYPE)
+                add_position(x, y, "NULL")
 
 
 
