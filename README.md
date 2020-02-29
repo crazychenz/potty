@@ -10,6 +10,10 @@ The general premise is that there is a baby that needs to get through a house (o
 
 **Testers:** Brianna Bosshard, Diana Agriesti, Mabel Agriesti, Zelda Agriesti
 
+## Releases
+
+[v0.0.1](https://github.com/crazychenz/potty/releases/tag/v0.0.1)
+
 ## Design Info
 
 This project designed to run with the Godot Game Engine v3.2. All in-game code will be written in Godot's GDScript to ensure maximum portability to multi-platforms.
