@@ -24,7 +24,7 @@ func is_empty(p1, p2 = null) -> bool:
 func get_position(p1, p2 = null):
     if p1 is Vector2 and p2 == null:
         return self.grid_array[p1.x][p1.y]
-    elif p1 is int and p2 is int:
+    elif (p1 is int and p2 is int) or (p1 is float and p2 is float):
         return self.grid_array[p1][p2]
     push_error("Invalid parameters in Grid.get_position()")
 
@@ -32,9 +32,13 @@ func set_position(p1, p2, p3 = null) -> void:
     if p1 is Vector2 and p3 == null:
         self.grid_array[p1.x][p1.y] = p2
         last_updated = OS.get_ticks_usec()
-    elif p1 is int and p2 is int:
+        return
+
+    if (p1 is int and p2 is int) or (p1 is float and p2 is float):
         self.grid_array[p1][p2] = p3
         last_updated = OS.get_ticks_usec()
+        return
+
     push_error("Invalid parameters in Grid.set_position()")
 
 func get_last_updated() -> int:

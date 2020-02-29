@@ -3,7 +3,8 @@ extends Node
 const GRID_ROWS = 10
 const GRID_COLS = 10
 const NPC_TYPE = "white"
-const NULL_TYPE = "black"
+const NULL_TYPE = "FloorTile1"
+const PIPEDOWNRIGHT = "PipeDownRight"
 
 var Grid = preload("res://Grid.gd")
 
@@ -20,6 +21,11 @@ func _init() -> void:
 
 func npc_move_up():
     if npc_location.y > 0:
+        var dest_contains = grid.get_position(npc_location.x, npc_location.y - 1)
+        #print("Dest contains %s" % dest_contains)
+        if dest_contains != NULL_TYPE:
+            return
+
         # Wipe the old position
         grid.set_position(npc_location, null)
         npc_location.y -= 1
@@ -28,6 +34,11 @@ func npc_move_up():
 
 func npc_move_down():
     if npc_location.y < GRID_ROWS - 1:
+        var dest_contains = grid.get_position(npc_location.x, npc_location.y + 1)
+        print("Dest contains %s" % dest_contains)
+        if dest_contains != NULL_TYPE:
+            return
+
         # Wipe the old position
         grid.set_position(npc_location, null)
         npc_location.y += 1
@@ -36,6 +47,11 @@ func npc_move_down():
 
 func npc_move_left():
     if npc_location.x > 0:
+        var dest_contains = grid.get_position(npc_location.x - 1, npc_location.y)
+        #print("Dest contains %s" % dest_contains)
+        if dest_contains != NULL_TYPE:
+            return
+
         # Wipe the old position
         grid.set_position(npc_location, null)
         npc_location.x -= 1
@@ -44,6 +60,11 @@ func npc_move_left():
 
 func npc_move_right():
     if npc_location.x < GRID_COLS - 1:
+        var dest_contains = grid.get_position(npc_location.x + 1, npc_location.y)
+        #print("Dest contains %s" % dest_contains)
+        if dest_contains != NULL_TYPE:
+            return
+
         # Wipe the old position
         grid.set_position(npc_location, null)
         npc_location.x += 1

@@ -5,10 +5,12 @@ onready var model = get_node("Model")
 func _ready() -> void:
     for x in range(model.GRID_COLS):
         for y in range(model.GRID_ROWS):
+            #print("x %s y %s obj %s" % [x, y, "black"])
             model.grid.set_position(x, y, "black")
 
     # Setup initial state
     model.grid.set_position(0, 0, "white")
+    model.grid.set_position(4, 4, model.PIPEDOWNRIGHT)
 
 
 func _input(event: InputEvent) -> void:
