@@ -5,7 +5,7 @@ onready var model = get_node("Model")
 func _ready() -> void:
     # Setup initial state
     model.grid.set_position(0, 0, "white")
-    model.grid.set_position(3, 3, model.PIPEDOWNRIGHT)
+    model.grid.set_position(3, 3, "BrickRedGray")
 
 
 func _input(event: InputEvent) -> void:

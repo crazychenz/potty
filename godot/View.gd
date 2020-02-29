@@ -18,8 +18,8 @@ func add_position(x : int, y : int, obj_type : String) -> void:
             obj = create_sprite_with_texture(load("res://assets/tiles/grass.png"))
         "white":
             obj = create_sprite_with_texture(load("res://assets/white.png"))
-        "PipeDownRight":
-            obj = create_sprite_with_texture(load("res://assets/PipeDownRight.png"))
+        "BrickRedGray":
+            obj = create_sprite_with_texture(load("res://assets/tiles/brickredgray.png"))
         _:
             push_warning("Unknown object added to viewer.")
             # do nothing
