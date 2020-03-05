@@ -2,78 +2,57 @@ extends Node
 
 const GRID_ROWS = 8
 const GRID_COLS = 8
-const NPC_TYPE = "white"
-const NULL_TYPE = "FloorTile1"
-const PIPEDOWNRIGHT = "PipeDownRight"
 
+const TYPE_EMPTY = "Empty"
+const TYPE_NPC = "Npc"
+const TYPE_GRASS = "Grass"
+const TYPE_BRICKWALL = "BrickWall"
+const TYPE_PUSHABLE_DUCK = "PushableDuck"
+
+const pushable = [TYPE_PUSHABLE_DUCK]
+
+#var Player = preload("res://Player.gd")
 var Grid = preload("res://Grid.gd")
 
 var grid = Grid.new()
 
-var npc_location = Vector2(0, 0)
+var player = GridObject.new()
 
 var last_grid_updated = 0
 
 onready var view = get_node("View")
 
 func _init() -> void:
-    grid.init_empty_grid(GRID_ROWS, GRID_COLS)
+	grid.init_empty_grid(GRID_ROWS, GRID_COLS)
+	
+	player.set_position(Vector2(0, 0))
+	player.set_type(TYPE_NPC)
+	grid.set_position(player.get_position(), player)
+	
+	var wall = GridObject.new()
+	wall.set_position(Vector2(4, 4))
+	wall.set_type(TYPE_BRICKWALL)
+	wall.set_pushable()
+	grid.set_position(wall.get_position(), wall)
 
-func npc_move_up():
-    if npc_location.y > 0:
-        var dest_contains = grid.get_position(npc_location.x, npc_location.y - 1)
-        #print("Dest contains %s" % dest_contains)
-        if dest_contains != null:
-            return
+#func create_player():
+#	return Player.new()
 
-        # Wipe the old position
-        grid.set_position(npc_location, null)
-        npc_location.y -= 1
-        # Add the new position
-        grid.set_position(npc_location, NPC_TYPE)
+func player_move_right():
+	grid.move_right(player)
 
-func npc_move_down():
-    if npc_location.y < GRID_ROWS - 1:
-        var dest_contains = grid.get_position(npc_location.x, npc_location.y + 1)
-        print("Dest contains %s" % dest_contains)
-        if dest_contains != null:
-            return
+func player_move_left():
+	grid.move_left(player)
 
-        # Wipe the old position
-        grid.set_position(npc_location, null)
-        npc_location.y += 1
-        # Add the new position
-        grid.set_position(npc_location, NPC_TYPE)
+func player_move_up():
+	grid.move_up(player)
 
-func npc_move_left():
-    if npc_location.x > 0:
-        var dest_contains = grid.get_position(npc_location.x - 1, npc_location.y)
-        #print("Dest contains %s" % dest_contains)
-        if dest_contains != null:
-            return
-
-        # Wipe the old position
-        grid.set_position(npc_location, null)
-        npc_location.x -= 1
-        # Add the new position
-        grid.set_position(npc_location, NPC_TYPE)
-
-func npc_move_right():
-    if npc_location.x < GRID_COLS - 1:
-        var dest_contains = grid.get_position(npc_location.x + 1, npc_location.y)
-        #print("Dest contains %s" % dest_contains)
-        if dest_contains != null:
-            return
-
-        # Wipe the old position
-        grid.set_position(npc_location, null)
-        npc_location.x += 1
-        # Add the new position
-        grid.set_position(npc_location, NPC_TYPE)
+func player_move_down():
+	grid.move_down(player)
 
 
 func _process(delta: float) -> void:
-    var updated = grid.get_last_updated()
-    if updated > last_grid_updated:
-        view.update_view()
-        last_grid_updated = updated
+	var updated = grid.get_last_updated()
+	if updated > last_grid_updated:
+		view.update_view()
+		last_grid_updated = updated
