@@ -32,3 +32,32 @@ margin_right = 990.0
 margin_bottom = 92.0
 custom_fonts/font = ExtResource( 5 )
 text = "Main Menu"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameOverControl" type="Control" parent="Control/Model"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameOverPanel" type="PanelContainer" parent="Control/Model/GameOverControl"]
+margin_left = 319.0
+margin_top = 107.0
+margin_right = 748.0
+margin_bottom = 462.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameOverLabel" type="Label" parent="Control/Model/GameOverControl/GameOverPanel"]
+margin_left = 7.0
+margin_top = 154.0
+margin_right = 422.0
+margin_bottom = 201.0
+custom_fonts/font = ExtResource( 5 )
+text = "Game Over"
+align = 1

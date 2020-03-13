@@ -35,9 +35,9 @@ __meta__ = {
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Control/CenterContainer"]
 margin_left = 62.0
-margin_top = 143.0
+margin_top = 107.0
 margin_right = 560.0
-margin_bottom = 456.0
+margin_bottom = 493.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -60,14 +60,14 @@ __meta__ = {
 [node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2"]
 margin_top = 139.0
 margin_right = 498.0
-margin_bottom = 313.0
+margin_bottom = 386.0
 custom_constants/margin_top = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer"]
 margin_left = 147.0
 margin_top = 32.0
 margin_right = 351.0
-margin_bottom = 174.0
+margin_bottom = 247.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 __meta__ = {
@@ -93,10 +93,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer"]
+[node name="MarginContainer3" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer"]
 margin_top = 73.0
 margin_right = 204.0
 margin_bottom = 142.0
+custom_constants/margin_right = 8
+custom_constants/margin_top = 8
+custom_constants/margin_left = 8
+custom_constants/margin_bottom = 8
+
+[node name="CreditsButton" type="Button" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer/MarginContainer3"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 196.0
+margin_bottom = 61.0
+custom_fonts/font = ExtResource( 1 )
+text = "Credits"
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer"]
+margin_top = 146.0
+margin_right = 204.0
+margin_bottom = 215.0
 custom_constants/margin_right = 8
 custom_constants/margin_top = 8
 custom_constants/margin_left = 8
