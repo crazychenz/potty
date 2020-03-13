@@ -1,0 +1,114 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/fonts/noto/noto-regular-touchable.tres" type="DynamicFont" id=1]
+[ext_resource path="res://TitleUI.gd" type="Script" id=2]
+[ext_resource path="res://assets/fonts/noto/noto-regular-title.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/original-potty.png" type="Texture" id=4]
+
+[node name="Node" type="Node"]
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite" parent="Node2D"]
+position = Vector2( 259, 303 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 4 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 1023.0
+margin_bottom = 609.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+margin_left = 398.0
+margin_top = 1.0
+margin_right = 1021.0
+margin_bottom = 601.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control/CenterContainer"]
+margin_left = 62.0
+margin_top = 143.0
+margin_right = 560.0
+margin_bottom = 456.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PottyTimeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer2"]
+margin_right = 498.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 3 )
+text = "Potty Time"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2"]
+margin_top = 139.0
+margin_right = 498.0
+margin_bottom = 313.0
+custom_constants/margin_top = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer"]
+margin_left = 147.0
+margin_top = 32.0
+margin_right = 351.0
+margin_bottom = 174.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer"]
+margin_right = 204.0
+margin_bottom = 69.0
+custom_constants/margin_right = 8
+custom_constants/margin_top = 8
+custom_constants/margin_left = 8
+custom_constants/margin_bottom = 8
+
+[node name="NewGameButton" type="Button" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer/MarginContainer2"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 196.0
+margin_bottom = 61.0
+custom_fonts/font = ExtResource( 1 )
+text = "New Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer"]
+margin_top = 73.0
+margin_right = 204.0
+margin_bottom = 142.0
+custom_constants/margin_right = 8
+custom_constants/margin_top = 8
+custom_constants/margin_left = 8
+custom_constants/margin_bottom = 8
+
+[node name="QuitButton" type="Button" parent="Control/CenterContainer/VBoxContainer2/MarginContainer/VBoxContainer/MarginContainer"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 196.0
+margin_bottom = 61.0
+custom_fonts/font = ExtResource( 1 )
+text = "Quit"
+__meta__ = {
+"_edit_use_anchors_": false
+}
