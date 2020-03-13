@@ -2,6 +2,8 @@ extends Node
 
 class_name GridObject
 
+signal game_over
+
 var position : Vector2
 var _type : String
 
@@ -30,6 +32,7 @@ func stack(obj: GridObject) -> bool:
         return false
     print("%s stacked on %s" % [obj.get_type(), self.get_type()])
     print("GAME OVER")
+    emit_signal("game_over")
     return true
 
 func set_consumable(v: bool = true):

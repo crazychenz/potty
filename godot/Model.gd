@@ -47,6 +47,7 @@ func _init() -> void:
     baby.set_position(Vector2(5, 3))
     baby.set_type(TYPE_BABY)
     baby.set_pushable()
+    baby.connect("game_over", self, "_on_game_over")
     grid.set_position(baby.get_position(), baby)
 
     var chicken = GridObject.new()
@@ -61,9 +62,11 @@ func _init() -> void:
     potty.set_stackable()
     grid.set_position(potty.get_position(), potty)
 
-
 #func create_player():
 #	return Player.new()
+func _on_game_over():
+    get_node("View").set_visible(false)
+    get_node("GameOverControl").set_visible(true)
 
 func player_move_right():
     grid.move_right(player)
