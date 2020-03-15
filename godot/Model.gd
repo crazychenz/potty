@@ -27,8 +27,10 @@ var last_grid_updated = 0
 
 onready var view = get_node("View")
 
+
 func _ready() -> void:
     potty.connect("game_over", view, "_on_game_over")
+
 
 func _init() -> void:
     grid.init_empty_grid(GRID_ROWS, GRID_COLS)
@@ -54,22 +56,20 @@ func _init() -> void:
     grid.set_position(potty.get_position(), potty)
 
 
+func player_move_right(pulling = false):
+    player.handle_action(ActionEventMove.new(player, ActionEventMove.RIGHT, pulling))
 
 
-func player_move_right():
-    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.RIGHT))
+func player_move_left(pulling = false):
+    player.handle_action(ActionEventMove.new(player, ActionEventMove.LEFT, pulling))
 
-func player_move_left():
-    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.LEFT))
-    #player.push_left()
 
-func player_move_up():
-    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.UP))
-    #player.push_up()
+func player_move_up(pulling = false):
+    player.handle_action(ActionEventMove.new(player, ActionEventMove.UP, pulling))
 
-func player_move_down():
-    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.DOWN))
-    #player.push_down()
+
+func player_move_down(pulling = false):
+    player.handle_action(ActionEventMove.new(player, ActionEventMove.DOWN, pulling))
 
 
 func _process(delta: float) -> void:

@@ -4,15 +4,18 @@ onready var model = get_parent()
 
 onready var board_offset := Vector2(50, 50)
 
+
 func _on_game_over():
     set_visible(false)
     get_parent().get_node("GameOverControl").set_visible(true)
+
 
 func create_sprite_with_texture(texture) -> Sprite:
     var obj = Sprite.new()
     obj.texture = texture
     obj.set_scale(Vector2(0.5, 0.5))
     return obj
+
 
 func add_position(x : int, y : int, obj_type : String) -> void:
     var obj
@@ -39,6 +42,7 @@ func add_position(x : int, y : int, obj_type : String) -> void:
 
     obj.set_position(Vector2((x * 64), (y * 64)) + board_offset)
     add_child(obj)
+
 
 func update_view() -> void:
     # Wipe all the old stuff
