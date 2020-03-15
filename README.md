@@ -67,7 +67,7 @@ This project uses Agile methodologies and a variant of Scrum to manage all work.
   * [Sprint 1](https://github.com/crazychenz/potty/milestone/1) - The Game Shell
   * [Sprint 2](https://github.com/crazychenz/potty/milestone/2) - Improving user experience.
 
-* <!-- RUBRIC: Release Plan --> Releases will be made at the end of each sprint. A release is composed of a tagged source code repository and a binary release of the product. Initially, all releases will be built only for Windows. Subsequent Sprints may include more platform releases.
+* <!-- RUBRIC: Release Plan --> Releases will be made at the end of each sprint. A release is composed of a tagged source code repository and a binary release of the product. Initially, all releases will be built only for Windows. Subsequent Sprints may include more platform releases. See them in the [Releases Section](https://github.com/crazychenz/potty/releases).
 
 * [Sprint Burndown Data](https://docs.google.com/spreadsheets/d/1NCjjhDnDJFOeivIgI7Wzn4YoHZ-kbNvl8garX6dcz3Q/edit?usp=sharing)
 
