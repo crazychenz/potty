@@ -9,12 +9,30 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Object",
+"class": "ActionEvent",
+"language": "GDScript",
+"path": "res://ActionEvent.gd"
+}, {
+"base": "ActionEvent",
+"class": "ActionEventMove",
+"language": "GDScript",
+"path": "res://ActionEventMove.gd"
+}, {
+"base": "Object",
+"class": "Grid",
+"language": "GDScript",
+"path": "res://Grid.gd"
+}, {
 "base": "Node",
 "class": "GridObject",
 "language": "GDScript",
 "path": "res://GridObject.gd"
 } ]
 _global_script_class_icons={
+"ActionEvent": "",
+"ActionEventMove": "",
+"Grid": "",
 "GridObject": ""
 }
 

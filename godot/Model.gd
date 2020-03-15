@@ -1,5 +1,7 @@
 extends Node
 
+signal game_over
+
 const GRID_ROWS = 8
 const GRID_COLS = 8
 
@@ -18,67 +20,56 @@ var Grid = load("res://Grid.gd")
 var bg_grid = Grid.new()
 var grid = Grid.new()
 
-var player = GridObject.new()
+var player = GridObject.new(TYPE_NPC, Vector2(0, 0), grid)
+var potty = GridObject.new(TYPE_POTTY, Vector2(7, 7), grid)
 
 var last_grid_updated = 0
 
 onready var view = get_node("View")
 
+func _ready() -> void:
+    potty.connect("game_over", view, "_on_game_over")
+
 func _init() -> void:
     grid.init_empty_grid(GRID_ROWS, GRID_COLS)
     bg_grid.init_empty_grid(GRID_ROWS, GRID_COLS)
 
-    player.set_position(Vector2(0, 0))
-    player.set_type(TYPE_NPC)
     grid.set_position(player.get_position(), player)
 
-    var wall = GridObject.new()
-    wall.set_position(Vector2(4, 4))
-    wall.set_type(TYPE_BRICKWALL)
+    var wall = GridObject.new(TYPE_BRICKWALL, Vector2(4, 4), grid)
+    wall.set_interact(funcref(wall, "static_interact"))
     grid.set_position(wall.get_position(), wall)
 
-    var duck = GridObject.new()
-    duck.set_position(Vector2(3, 3))
-    duck.set_type(TYPE_DUCK)
-    duck.set_pushable()
+    var duck = GridObject.new(TYPE_DUCK, Vector2(1, 1), grid)
     grid.set_position(duck.get_position(), duck)
 
-    var baby = GridObject.new()
-    baby.set_position(Vector2(5, 3))
-    baby.set_type(TYPE_BABY)
-    baby.set_pushable()
-    baby.connect("game_over", self, "_on_game_over")
+    var baby = GridObject.new(TYPE_BABY, Vector2(5, 3), grid)
     grid.set_position(baby.get_position(), baby)
 
-    var chicken = GridObject.new()
-    chicken.set_position(Vector2(5, 5))
-    chicken.set_type(TYPE_CHICKEN)
-    chicken.set_consumable()
+    var chicken = GridObject.new(TYPE_CHICKEN, Vector2(5, 5), grid)
+    chicken.set_interact(funcref(chicken, "consumable_interact"))
     grid.set_position(chicken.get_position(), chicken)
 
-    var potty = GridObject.new()
-    potty.set_position(Vector2(7, 7))
-    potty.set_type(TYPE_POTTY)
-    potty.set_stackable()
+    potty.set_interact(funcref(potty, "potty_interact"))
     grid.set_position(potty.get_position(), potty)
 
-#func create_player():
-#	return Player.new()
-func _on_game_over():
-    get_node("View").set_visible(false)
-    get_node("GameOverControl").set_visible(true)
+
+
 
 func player_move_right():
-    grid.move_right(player)
+    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.RIGHT))
 
 func player_move_left():
-    grid.move_left(player)
+    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.LEFT))
+    #player.push_left()
 
 func player_move_up():
-    grid.move_up(player)
+    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.UP))
+    #player.push_up()
 
 func player_move_down():
-    grid.move_down(player)
+    player._interact.call_func(ActionEventMove.new(player, ActionEventMove.DOWN))
+    #player.push_down()
 
 
 func _process(delta: float) -> void:
