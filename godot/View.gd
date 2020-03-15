@@ -7,7 +7,7 @@ onready var board_offset := Vector2(50, 50)
 
 func _on_game_over():
     set_visible(false)
-    get_parent().get_node("GameOverControl").set_visible(true)
+    get_parent().get_node("UIControl/GameOverPanel").set_visible(true)
 
 
 func create_sprite_with_texture(texture) -> Sprite:
