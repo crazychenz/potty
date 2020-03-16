@@ -32,7 +32,6 @@ func reset_state():
 
 
 func _on_BladderTimer_timeout():
-    print("%s" % bladder)
     increase_bladder(bladder_fill_rate)
     BladderTimer.start()
 

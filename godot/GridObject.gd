@@ -84,15 +84,15 @@ func move_action_event(incoming_event : ActionEvent) -> bool:
         var pulled_object = null
         if incoming_event.is_pulling():
             var pull_pos = direction.rotated(deg2rad(180)) + get_position()
-            pulled_object = _grid.get_position(pull_pos)
-            print("Pulling %s at %s" % [pulled_object.get_type(), pull_pos])
-            outgoing_event = ActionEventMove.new(self, direction)
+            if _grid.is_valid_position(pull_pos):
+                pulled_object = _grid.get_position(pull_pos)
+                outgoing_event = ActionEventMove.new(self, direction)
 
         # Perform the move.
         _grid.__move(get_position(), new_pos, self)
 
         # Perform the pull.
-        if incoming_event.is_pulling():
+        if pulled_object != null and incoming_event.is_pulling():
             pulled_object.handle_action(outgoing_event)
 
         #print("%s Reflected %s" % [direction, direction.rotated(deg2rad(180))])
