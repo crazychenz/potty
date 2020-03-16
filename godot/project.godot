@@ -42,6 +42,11 @@ config/name="PottyTime"
 run/main_scene="res://Title.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+PlayerState="*res://PlayerState.gd"
+LevelState="*res://LevelState.gd"
+
 [input]
 
 ui_left={

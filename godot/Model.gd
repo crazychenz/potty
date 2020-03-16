@@ -23,13 +23,10 @@ var grid = Grid.new()
 var player = GridObject.new(TYPE_NPC, Vector2(0, 0), grid)
 var potty = GridObject.new(TYPE_POTTY, Vector2(7, 7), grid)
 
+
 var last_grid_updated = 0
 
 onready var view = get_node("View")
-
-
-func _ready() -> void:
-    potty.connect("game_over", view, "_on_game_over")
 
 
 func _init() -> void:
@@ -46,9 +43,14 @@ func _init() -> void:
     grid.set_position(duck.get_position(), duck)
 
     var baby = GridObject.new(TYPE_BABY, Vector2(5, 3), grid)
+    baby.set_interact(funcref(baby, "baby_interact"))
     grid.set_position(baby.get_position(), baby)
 
     var chicken = GridObject.new(TYPE_CHICKEN, Vector2(5, 5), grid)
+    chicken.set_interact(funcref(chicken, "consumable_interact"))
+    grid.set_position(chicken.get_position(), chicken)
+
+    chicken = GridObject.new(TYPE_CHICKEN, Vector2(5, 6), grid)
     chicken.set_interact(funcref(chicken, "consumable_interact"))
     grid.set_position(chicken.get_position(), chicken)
 

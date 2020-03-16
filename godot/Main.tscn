@@ -25,17 +25,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MainMenuButton" type="Button" parent="Control/Model/UIControl"]
-margin_left = 797.0
-margin_top = 39.0
-margin_right = 990.0
-margin_bottom = 92.0
-custom_fonts/font = ExtResource( 5 )
-text = "Main Menu"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="GameOverPanel" type="PanelContainer" parent="Control/Model/UIControl"]
 visible = false
 margin_left = 319.0
@@ -80,3 +69,89 @@ margin_right = 415.0
 margin_bottom = 259.0
 custom_fonts/font = ExtResource( 5 )
 text = "Return To Menu"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Model/UIControl"]
+margin_left = 805.0
+margin_top = 43.0
+margin_right = 998.0
+margin_bottom = 353.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 16
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainMenuButton" type="Button" parent="Control/Model/UIControl/VBoxContainer"]
+margin_right = 193.0
+margin_bottom = 53.0
+custom_fonts/font = ExtResource( 5 )
+text = "Main Menu"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Model/UIControl/VBoxContainer"]
+margin_top = 69.0
+margin_right = 193.0
+margin_bottom = 181.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BladderLabel" type="Label" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer"]
+margin_right = 193.0
+margin_bottom = 47.0
+custom_fonts/font = ExtResource( 5 )
+text = "Bladder:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BladderValue" type="ProgressBar" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer"]
+margin_top = 51.0
+margin_right = 193.0
+margin_bottom = 112.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 5 )
+percent_visible = false
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control/Model/UIControl/VBoxContainer"]
+margin_top = 197.0
+margin_right = 193.0
+margin_bottom = 310.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HappinessLabel" type="Label" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer2"]
+margin_right = 193.0
+margin_bottom = 47.0
+custom_fonts/font = ExtResource( 5 )
+text = "Happiness:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HappinessValue" type="ProgressBar" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer2"]
+margin_top = 51.0
+margin_right = 193.0
+margin_bottom = 113.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 5 )
+value = 100.0
+percent_visible = false
+
+[node name="Notes" type="Control" parent="Control/Model"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Control/Model/Notes"]
+margin_left = 1049.0
+margin_top = 179.0
+margin_right = 1407.0
+margin_bottom = 193.0
+text = "Each time the player is moved, the bladder fills up a bit."

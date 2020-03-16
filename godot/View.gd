@@ -5,6 +5,22 @@ onready var model = get_parent()
 onready var board_offset := Vector2(50, 50)
 
 
+func _ready():
+    LevelState.connect("game_over", self, "_on_game_over")
+    LevelState.connect("happiness_gone", self, "_on_LevelState_happiness_gone")
+    LevelState.connect("bladder_full", self, "_on_LevelState_bladder_full")
+
+
+func _on_LevelState_happiness_gone():
+    # TODO: Do some animation?
+    LevelState.game_over()
+
+
+func _on_LevelState_bladder_full():
+    # TODO: Do some animation?
+    LevelState.game_over()
+
+
 func _on_game_over():
     set_visible(false)
     get_parent().get_node("UIControl/GameOverPanel").set_visible(true)

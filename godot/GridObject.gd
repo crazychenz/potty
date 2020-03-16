@@ -35,6 +35,10 @@ func handle_action(action_event) -> bool:
 func consumable_interact(action_event) -> bool:
     var actor = action_event.get_object()
     print("%s consumed %s" % [actor.get_type(), get_type()])
+
+    # Note: This isn't ideal, but its quick.
+    if actor.get_type() == "Baby":
+        LevelState.increase_bladder(50)
     return true
 
 
@@ -49,8 +53,16 @@ func potty_interact(action_event):
     var actor = action_event.get_object()
     if actor.get_type() != "Baby":
         return false
-    emit_signal("game_over")
+    LevelState.game_over()
     return true
+
+
+func baby_interact(incoming_event : ActionEvent) -> bool:
+    var ret = move_action_event(incoming_event)
+    if ret:
+        # Decrease baby happiness.
+        LevelState.decrease_happiness(10)
+    return ret
 
 
 func move_action_event(incoming_event : ActionEvent) -> bool:
