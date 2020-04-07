@@ -3,6 +3,7 @@ extends Node2D
 onready var model = get_parent()
 
 onready var board_offset := Vector2(50, 50)
+onready var tile_dims := Vector2(64, 64)
 
 
 func _ready():
@@ -62,7 +63,7 @@ func add_position(x : int, y : int, obj_type : String) -> void:
             # do nothing
             return
 
-    obj.set_position(Vector2((x * 64), (y * 64)) + board_offset)
+    obj.set_position(Vector2((x * tile_dims.x), (y * tile_dims.y)) + board_offset)
     add_child(obj)
 
 
