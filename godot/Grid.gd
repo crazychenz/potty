@@ -86,8 +86,14 @@ func get_last_updated() -> int:
     return last_updated
 
 
-func __move(obj_pos, new_pos, obj) -> bool:
-    var old : GridObject = get_position(new_pos)
+# TODO: This is so ugly.
+func __move(obj_pos, new_pos, obj, new_obj = empty) -> bool:
+    var old : GridObject
+    if new_obj != empty:
+        old = get_position(new_pos)
+    else:
+        old = new_obj
+
     old.set_position(obj_pos)
     set_position(obj_pos, old)
 
@@ -95,6 +101,7 @@ func __move(obj_pos, new_pos, obj) -> bool:
     set_position(new_pos, obj)
 
     return true
+
 
 func _move(obj, obj_pos, new_pos, on_edge, push_func):
     if on_edge:

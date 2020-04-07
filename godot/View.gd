@@ -2,7 +2,7 @@ extends Node2D
 
 onready var model = get_parent()
 
-onready var board_offset := Vector2(50, 50)
+onready var board_offset := Vector2(75, 75)
 onready var tile_dims := Vector2(64, 64)
 
 

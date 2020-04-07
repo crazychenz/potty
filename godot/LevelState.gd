@@ -17,8 +17,8 @@ var happiness : float = 100
 var min_happiness : float = 0
 var max_happiness : float = 100
 
-var current_level = 1
-var last_level = 1
+var current_level = 7
+var last_level = 7
 
 var BladderTimer : Timer = Timer.new()
 
@@ -30,7 +30,7 @@ func _ready() -> void:
 func reset_state():
     bladder = 0
     happiness = 100
-    BladderTimer.wait_time = 0.5
+    BladderTimer.wait_time = 0.7
     BladderTimer.connect("timeout", self, "_on_BladderTimer_timeout")
     BladderTimer.start()
 
