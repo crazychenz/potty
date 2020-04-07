@@ -27,10 +27,10 @@ __meta__ = {
 
 [node name="GameOverPanel" type="PanelContainer" parent="Control/Model/UIControl"]
 visible = false
-margin_left = 319.0
-margin_top = 107.0
-margin_right = 748.0
-margin_bottom = 462.0
+margin_left = 145.0
+margin_top = 111.0
+margin_right = 574.0
+margin_bottom = 466.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -61,7 +61,7 @@ margin_top = 132.0
 margin_right = 415.0
 margin_bottom = 185.0
 custom_fonts/font = ExtResource( 5 )
-text = "Restart"
+text = "Next"
 
 [node name="ReturnButton" type="Button" parent="Control/Model/UIControl/GameOverPanel/VBoxContainer"]
 margin_top = 206.0
@@ -71,7 +71,7 @@ custom_fonts/font = ExtResource( 5 )
 text = "Return To Menu"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/Model/UIControl"]
-margin_left = 805.0
+margin_left = 708.0
 margin_top = 43.0
 margin_right = 998.0
 margin_bottom = 353.0
@@ -83,7 +83,7 @@ __meta__ = {
 }
 
 [node name="MainMenuButton" type="Button" parent="Control/Model/UIControl/VBoxContainer"]
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 53.0
 custom_fonts/font = ExtResource( 5 )
 text = "Main Menu"
@@ -93,13 +93,13 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/Model/UIControl/VBoxContainer"]
 margin_top = 69.0
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 181.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="BladderLabel" type="Label" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer"]
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 47.0
 custom_fonts/font = ExtResource( 5 )
 text = "Bladder:"
@@ -109,7 +109,7 @@ __meta__ = {
 
 [node name="BladderValue" type="ProgressBar" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer"]
 margin_top = 51.0
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 112.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -118,13 +118,13 @@ percent_visible = false
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Control/Model/UIControl/VBoxContainer"]
 margin_top = 197.0
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 310.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HappinessLabel" type="Label" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer2"]
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 47.0
 custom_fonts/font = ExtResource( 5 )
 text = "Happiness:"
@@ -134,13 +134,33 @@ __meta__ = {
 
 [node name="HappinessValue" type="ProgressBar" parent="Control/Model/UIControl/VBoxContainer/VBoxContainer2"]
 margin_top = 51.0
-margin_right = 193.0
+margin_right = 290.0
 margin_bottom = 113.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
 value = 100.0
 percent_visible = false
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/Model/UIControl"]
+margin_left = 735.0
+margin_top = 366.0
+margin_right = 970.0
+margin_bottom = 583.0
+text = "Instructions:
+
+Objective: Get child to potty before its bladder fills and before its happiness is gone.
+
+Move With:
+- Left Arrow (or A)
+- Right Arrow (or D)
+- Up Arrow (or W)
+- Down Arrow (or S)
+
+Hold SPACEBAR while moving to pull adjacent object (if pullable)."
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Notes" type="Control" parent="Control/Model"]
 margin_right = 40.0

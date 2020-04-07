@@ -7,6 +7,7 @@ onready var board_offset := Vector2(50, 50)
 
 func _ready():
     LevelState.connect("game_over", self, "_on_game_over")
+    LevelState.connect("level_complete", self, "_on_level_complete")
     LevelState.connect("happiness_gone", self, "_on_LevelState_happiness_gone")
     LevelState.connect("bladder_full", self, "_on_LevelState_bladder_full")
 
@@ -22,6 +23,11 @@ func _on_LevelState_bladder_full():
 
 
 func _on_game_over():
+    set_visible(false)
+    get_parent().get_node("UIControl/GameOverPanel").set_visible(true)
+
+
+func _on_level_complete():
     set_visible(false)
     get_parent().get_node("UIControl/GameOverPanel").set_visible(true)
 

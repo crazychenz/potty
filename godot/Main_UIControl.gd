@@ -13,6 +13,7 @@ func _ready() -> void:
     ReturnButton.connect("pressed", self, "_on_MainMenuButton_pressed")
 
     LevelState.connect("happiness_decreased", self, "_on_LevelState_happiness_decreased")
+    LevelState.connect("happiness_increased", self, "_on_LevelState_happiness_increased")
     LevelState.connect("bladder_increased", self, "_on_LevelState_bladder_increased")
 
     LevelState.reset_state()
@@ -27,6 +28,9 @@ func _on_PlayAgainButton_pressed() -> void:
 
 
 func _on_LevelState_happiness_decreased(value):
+    HappinessValue.value = value
+
+func _on_LevelState_happiness_increased(value):
     HappinessValue.value = value
 
 

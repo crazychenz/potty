@@ -2,7 +2,7 @@ extends Object
 
 class_name Grid
 
-var grid_array : Array
+var grid_array : Dictionary = {}
 var last_updated : int
 var _rows
 var _cols
@@ -38,39 +38,44 @@ func init_empty_grid(rows : int, cols : int) -> void:
     last_updated += 1
     _rows = rows
     _cols = cols
-    self.grid_array = []
-    for x in cols:
-        var col = []
-        for y in rows:
-            col.append(empty)
-        self.grid_array.append(col)
+    for x in range(0, cols):
+        grid_array[x] = {}
+        for y in range(0, rows):
+            #grid_array[x][y] = empty
+            grid_array[x][y] = GridObject.new("Empty", Vector2(x, y), self, funcref(self, "empty_interact"))
 
 
 func is_empty(p1, p2 = null) -> bool:
     if p1 is Vector2 and p2 == null:
-        return self.grid_array[p1.x][p1.y] == empty
+        return self.grid_array[int(p1.x)][int(p1.y)] == empty
     elif p1 is int and p2 is int:
-        return self.grid_array[p1][p2] == empty
+        return self.grid_array[int(p1)][int(p2)] == empty
     push_error("Invalid parameters in Grid.is_empty()")
     return false # Required for static typed signature.
 
 
 func get_position(p1, p2 = null):
     if p1 is Vector2 and p2 == null:
-        return self.grid_array[p1.x][p1.y]
+        var first = grid_array
+        var first2 : float = p1.x
+        var second = first[1]
+        var second2 = first[int(p1.x)]
+        var third = second[int(p1.y)]
+        var ret = grid_array[int(p1.x)][int(p1.y)]
+        return ret
     elif (p1 is int and p2 is int) or (p1 is float and p2 is float):
-        return self.grid_array[p1][p2]
+        return grid_array[int(p1)][int(p2)]
     push_error("Invalid parameters in Grid.get_position()")
 
 
 func set_position(p1, p2, p3 = null) -> void:
     if p1 is Vector2 and p3 == null:
-        self.grid_array[p1.x][p1.y] = p2
+        self.grid_array[int(p1.x)][int(p1.y)] = p2
         last_updated = OS.get_ticks_usec()
         return
 
     if (p1 is int and p2 is int) or (p1 is float and p2 is float):
-        self.grid_array[p1][p2] = p3
+        self.grid_array[int(p1)][int(p2)] = p3
         last_updated = OS.get_ticks_usec()
         return
 
@@ -82,11 +87,13 @@ func get_last_updated() -> int:
 
 
 func __move(obj_pos, new_pos, obj) -> bool:
-    # Wipe the old position
-    set_position(obj_pos, empty)
+    var old : GridObject = get_position(new_pos)
+    old.set_position(obj_pos)
+    set_position(obj_pos, old)
+
     obj.set_position(new_pos)
-    # Add the new position
     set_position(new_pos, obj)
+
     return true
 
 func _move(obj, obj_pos, new_pos, on_edge, push_func):

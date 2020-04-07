@@ -6,6 +6,7 @@ signal happiness_gone
 signal bladder_full
 
 signal happiness_decreased(amount)
+signal happiness_increased(amount)
 signal bladder_increased(amount)
 
 # properties
@@ -14,7 +15,10 @@ var bladder_fill_rate : float = 1
 var max_bladder : float = 100
 var happiness : float = 100
 var min_happiness : float = 0
+var max_happiness : float = 100
 
+var current_level = 1
+var last_level = 1
 
 var BladderTimer : Timer = Timer.new()
 
@@ -46,6 +50,12 @@ func decrease_happiness(amount):
         # Game over
 
 
+func increase_happiness(amount):
+    happiness += amount
+    happiness = min(happiness, max_happiness)
+    emit_signal("happiness_increased", happiness)
+
+
 func increase_bladder(amount):
     bladder += amount
     bladder = min(bladder, max_bladder)
@@ -54,6 +64,16 @@ func increase_bladder(amount):
     if bladder == max_bladder:
         emit_signal("bladder_full")
         # Game over
+
+
+func level_complete():
+    # TODO: Using replay for goto next level for now.
+    if current_level == last_level:
+        current_level = 1
+        game_over()
+    else:
+        current_level += 1
+        game_over()
 
 
 func game_over():
