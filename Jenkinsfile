@@ -31,6 +31,9 @@ pipeline {
         booleanParam(name: 'EXPORT_WINDOWSDESKTOP',
             defaultValue: true,
             description: 'Export Windows Desktop')
+        booleanParam(name: 'TEST_WINDOWSDESKTOP',
+            defaultValue: true,
+            description: 'Test Windows Desktop')
     }
     stages {
         stage('Checkout') {
@@ -65,6 +68,7 @@ pipeline {
             }
         }
         stage('Test-WindowsDesktop') {
+            when { expression { params.TEST_WINDOWSDESKTOP == true } }
             steps {
                 bat label: 'GUT', 
                     script: params.GODOT_ENGINE_PATH + ' ' +
