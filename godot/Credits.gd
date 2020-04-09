@@ -7,12 +7,12 @@ onready var CreditsLabel : Label = find_node("CreditsLabel")
 
 
 func _ready() -> void:
-    var creditsSize : Vector2 = CreditsLabel.get_combined_minimum_size()
-    MainMenuButton.connect("pressed", self, "_on_MainMenuButton_pressed")
-    tween.interpolate_property(container, "scroll_vertical",
-        0, creditsSize.y, 10, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-    tween.start()
+	var creditsSize : Vector2 = CreditsLabel.get_combined_minimum_size()
+	MainMenuButton.connect("pressed", self, "_on_MainMenuButton_pressed")
+	tween.interpolate_property(container, "scroll_vertical",
+		0, creditsSize.y, 10, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+	tween.start()
 
 
 func _on_MainMenuButton_pressed() -> void:
-    get_tree().change_scene("res://Title.tscn")
+	g.change_scene("res://Title.tscn")

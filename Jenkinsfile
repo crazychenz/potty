@@ -75,7 +75,7 @@ pipeline {
                         '--no-window ' + 
                         '--path "' + env.WORKSPACE + '\\godot" ' +
                         '-s addons/gut/gut_cmdln.gd ' +
-                        '-gtest=res://test/unit/test_example.gd -gexit '
+                        '-gtest=res://test/unit/test_simple.gd -gexit '
             }
         }
     }

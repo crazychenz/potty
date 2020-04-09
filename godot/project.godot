@@ -44,8 +44,11 @@ config/icon="res://icon.png"
 
 [autoload]
 
+g="*res://global.gd"
 PlayerState="*res://PlayerState.gd"
 LevelState="*res://LevelState.gd"
+IconLoader="*res://addons/file-editor/scripts/IconLoader.gd"
+LastOpenedFiles="*res://addons/file-editor/scripts/LastOpenedFiles.gd"
 
 [display]
 
@@ -54,7 +57,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "gut" )
+enabled=PoolStringArray( "file-editor", "gut" )
 
 [input]
 
