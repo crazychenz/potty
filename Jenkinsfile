@@ -12,32 +12,73 @@ pipeline {
         // Console output prepended with timestamps.
         //timestamps()
     }
-    //parameters {
-    //    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-    //    text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
-    //    booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
-    //    choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
-    //    password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
-    //}
+    parameters {
+        string(name: 'GODOT_ENGINE_PATH',
+            defaultValue: 'C:\\projects\\stable\\engine\\Godot_v3.2.1-stable_win64.exe',
+            description: 'Godot Engine Path')
+        string(name: 'GODOT_ENGINE_HUSH_ARGS',
+            defaultValue: '--no-window --windowed --resolution 1x1 --position 0,0',
+            description: 'Godot Arguments To Hush The GUI Noise')
+        string(name: 'POTTYTIME_REPO',
+            defaultValue: 'C:\\projects\\stable\\potty',
+            description: 'PottyTime Git Repository Path/Url')
+        string(name: 'POTTYTIME_BRANCH',
+            defaultValue: '*/master',
+            description: 'PottyTime Repository Branch')
+        booleanParam(name: 'EXPORT_ANDROID',
+            defaultValue: true,
+            description: 'Export Android')
+        booleanParam(name: 'EXPORT_WINDOWSDESKTOP',
+            defaultValue: true,
+            description: 'Export Windows Desktop')
+    }
     stages {
-        //stage('Checkout') {
-        //    steps {
-        //        build 'PottyTime-Checkout'
-        //    }
-        //}
-        stage('Exports') {
-            parallel {
-                stage('PottyTime-Export-Android') {
-                    steps {
-                        build 'PottyTime-Export-Android'
-                    }
-                }
-                stage('PottyTime-Export-WindowsExe') {
-                    steps {
-                        build 'PottyTime-Export-WindowsExe'
-                    }
-                }
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: params.POTTYTIME_BRANCH]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[url: params.POTTYTIME_REPO]]])
             }
+        }
+        stage('Export-Android') {
+            when { expression { params.EXPORT_ANDROID == true } }
+            steps {
+                bat label: 'Godot Export',
+                    script: params.GODOT_ENGINE_PATH + ' ' + 
+                    '--path "' + env.WORKSPACE + '\\godot" ' + 
+                    '--export-debug Android "%WORKSPACE%\\PottyTime-Android.apk" ' + 
+                    params.GODOT_ENGINE_HUSH_ARGS
+            }
+        }
+        stage('Export-WindowsDesktop') {
+            when { expression { params.EXPORT_WINDOWSDESKTOP == true } }
+            steps {
+                bat label: 'GUT', 
+                    script: params.GODOT_ENGINE_PATH + ' ' + 
+                    '--path "' + env.WORKSPACE + '\\godot" ' + 
+                    '--export-debug WindowsDesktop ' + 
+                    '"' + env.WORKSPACE + '\\PottyTime-WindowsDesktop.exe" ' + 
+                    params.GODOT_ENGINE_HUSH_ARGS
+                
+            }
+        }
+        stage('Test-WindowsDesktop') {
+            steps {
+                bat label: 'GUT', 
+                    script: params.GODOT_ENGINE_PATH + ' ' +
+                        '--no-window ' + 
+                        '--path "' + env.WORKSPACE + '\\godot" ' +
+                        '-s addons/gut/gut_cmdln.gd ' +
+                        '-gtest=res://test/unit/test_example.gd -gexit '
+            }
+        }
+    }
+    post {
+        always {
+            // Note: Full path doesn't work.
+            archiveArtifacts artifacts: "PottyTime-*.*", fingerprint: true
         }
     }
 }
