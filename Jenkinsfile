@@ -74,7 +74,7 @@ pipeline {
                     script: params.GODOT_ENGINE_PATH + ' ' +
                         '--no-window ' + 
                         '--path "' + env.WORKSPACE + '\\godot" ' +
-                        '-s addons/gut/gut_cmdln.gd ' +
+                        '-s addons/gutlite/gutlite_cli.gd ' +
                         '-gtest=res://test/unit/test_simple.gd -gexit '
             }
         }
