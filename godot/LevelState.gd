@@ -4,6 +4,7 @@ signal game_over
 
 signal happiness_gone
 signal bladder_full
+signal level_complete
 
 signal happiness_decreased(amount)
 signal happiness_increased(amount)
@@ -22,8 +23,17 @@ var last_level = 7
 
 var BladderTimer : Timer = Timer.new()
 
+func _notification(what):
+    if what == NOTIFICATION_PREDELETE:
+        _fini()
+
+func _fini():
+    if is_instance_valid(BladderTimer):
+        BladderTimer.free()
+
 func _ready() -> void:
     add_child(BladderTimer)
+    BladderTimer.connect("timeout", self, "_on_BladderTimer_timeout")
     reset_state()
 
 
@@ -31,7 +41,6 @@ func reset_state():
     bladder = 0
     happiness = 100
     BladderTimer.wait_time = 0.7
-    BladderTimer.connect("timeout", self, "_on_BladderTimer_timeout")
     BladderTimer.start()
 
 

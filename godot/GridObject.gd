@@ -8,7 +8,7 @@ var _position : Vector2
 var _type : String
 var _grid
 var preaction
-var _interact
+var _interact : FuncRef
 
 var deleteme : Vector2
 
@@ -24,6 +24,10 @@ func _init(type, position, grid, interact = null) -> void:
 
 
 func set_interact(interact):
+    if _interact != null and is_instance_valid(_interact):
+        #print("Leaked set_funcref %s %s" % [_interact, interact])
+        #_interact.free()
+        pass
     _interact = interact
 
 
@@ -91,6 +95,8 @@ func move_action_event(incoming_event : ActionEvent) -> bool:
         if target_object != _grid.empty and \
             not target_object.handle_action(outgoing_event):
             return false
+        #outgoing_event._fini()
+        #outgoing_event.free()
 
         # Now that we're prepared to move, prepare to pull if applicable.
         var pulled_object = null
@@ -109,6 +115,8 @@ func move_action_event(incoming_event : ActionEvent) -> bool:
         # Perform the pull.
         if pulled_object != null and incoming_event.is_pulling():
             pulled_object.handle_action(outgoing_event2)
+            #outgoing_event2._fini()
+            #outgoing_event2.free()
 #        else:
 #            for y in range(8):
 #                var line_str = ""

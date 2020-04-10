@@ -39,7 +39,7 @@ _global_script_class_icons={
 [application]
 
 config/name="PottyTime"
-run/main_scene="res://Title.tscn"
+run/main_scene="res://Entry.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -89,7 +89,3 @@ ui_down={
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
-
-[rendering]
-
-environment/default_environment="res://default_env.tres"

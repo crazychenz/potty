@@ -9,6 +9,13 @@ var _cols
 
 var empty : GridObject
 
+func _fini() -> void:
+    for x in range(0, _cols):
+        for y in range(0, _rows):
+            if is_instance_valid(grid_array[x][y]):
+                grid_array[x][y].queue_free()
+    empty.queue_free()
+
 func _init() -> void:
     empty = GridObject.new("Empty", Vector2(-1, -1), self, funcref(self, "empty_interact"))
 
@@ -64,22 +71,36 @@ func get_position(p1, p2 = null):
         var ret = grid_array[int(p1.x)][int(p1.y)]
         return ret
     elif (p1 is int and p2 is int) or (p1 is float and p2 is float):
+        var x = int(p1)
+        var y = int(p2)
         return grid_array[int(p1)][int(p2)]
     push_error("Invalid parameters in Grid.get_position()")
 
 
 func set_position(p1, p2, p3 = null) -> void:
     if p1 is Vector2 and p3 == null:
-        self.grid_array[int(p1.x)][int(p1.y)] = p2
-        last_updated = OS.get_ticks_usec()
+        # If the position is non-null and valid, deallocate.
+        if self.grid_array[int(p1.x)][int(p1.y)] != null and is_instance_valid(self.grid_array[int(p1.x)][int(p1.y)]):
+            self.grid_array[int(p1.x)][int(p1.y)].queue_free()
+        # Now assign new value
+        _set_position(p1, p2)
         return
 
     if (p1 is int and p2 is int) or (p1 is float and p2 is float):
-        self.grid_array[int(p1)][int(p2)] = p3
-        last_updated = OS.get_ticks_usec()
+        # If the position is non-null and valid, deallocate.
+        if self.grid_array[int(p1)][int(p2)] != null and is_instance_valid(self.grid_array[int(p1)][int(p2)]):
+            self.grid_array[int(p1)][int(p2)].queue_free()
+        # Now assign new value
+        _set_position(Vector2(p1, p2), p3)
         return
 
     push_error("Invalid parameters in Grid.set_position()")
+
+
+func _set_position(pos, obj):
+    self.grid_array[int(pos.x)][int(pos.y)] = obj
+    last_updated = OS.get_ticks_usec()
+    
 
 
 func get_last_updated() -> int:
@@ -95,10 +116,10 @@ func __move(obj_pos, new_pos, obj, new_obj = empty) -> bool:
         old = new_obj
 
     old.set_position(obj_pos)
-    set_position(obj_pos, old)
+    _set_position(obj_pos, old)
 
     obj.set_position(new_pos)
-    set_position(new_pos, obj)
+    _set_position(new_pos, obj)
 
     return true
 
