@@ -16,6 +16,8 @@ The general premise is that there is a baby that needs to get through a house (o
 
 [v0.0.2](https://github.com/crazychenz/potty/releases/tag/v0.0.2)
 
+[v0.0.3](https://github.com/crazychenz/potty/releases/tag/v0.0.3)
+
 ## Design Info
 
 This project designed to run with the Godot Game Engine v3.2. All in-game code will be written in Godot's GDScript to ensure maximum portability to multi-platforms.
@@ -63,16 +65,15 @@ This project uses Agile methodologies and a variant of Scrum to manage all work.
 * The sprint backlog will be tracked as GitHub Milestones.
   https://github.com/crazychenz/potty/milestones
   
-<!-- RUBRIC: Number Of Iterations, Kanban Boards, Sprint Backlogs --> Current Milestones:
-  
-* [Sprint 1](https://github.com/crazychenz/potty/milestone/1) - The Game Shell
-  * [Sprint 2](https://github.com/crazychenz/potty/milestone/2) - Improving user experience.
-  * [Sprint 3](https://github.com/crazychenz/potty/milestone/3) - Minimal Viable Product and Mobility
-* [Sprint 4](https://github.com/crazychenz/potty/milestone/4) - Strategic Development
-  * [Sprint 5](https://github.com/crazychenz/potty/milestone/4) - Extended and Smoother Gameplay
-  
-* <!-- RUBRIC: Release Plan --> Releases will be made at the end of each sprint. A release is composed of a tagged source code repository and a binary release of the product. Initially, all releases will be built only for Windows. Subsequent Sprints may include more platform releases. See them in the [Releases Section](https://github.com/crazychenz/potty/releases).
 
+<!-- RUBRIC: Number Of Iterations, Kanban Boards, Sprint Backlogs --> Current Milestones:
+
+* [Sprint 1](https://github.com/crazychenz/potty/milestone/1) - The Game Shell
+* [Sprint 2](https://github.com/crazychenz/potty/milestone/2) - Improving user experience.
+* [Sprint 3](https://github.com/crazychenz/potty/milestone/3) - Minimal Viable Product and Mobility
+* [Sprint 4](https://github.com/crazychenz/potty/milestone/4) - Strategic Development (Developer Sprint)
+* [Sprint 5](https://github.com/crazychenz/potty/milestone/4) - Extended and Smoother Gameplay
+* <!-- RUBRIC: Release Plan --> Releases will be made at the end of each sprint. A release is composed of a tagged source code repository and a binary release of the product. Initially, all releases will be built only for Windows. Subsequent Sprints may include more platform releases. See them in the [Releases Section](https://github.com/crazychenz/potty/releases).
 * [Sprint Burndown Data](https://docs.google.com/spreadsheets/d/1NCjjhDnDJFOeivIgI7Wzn4YoHZ-kbNvl8garX6dcz3Q/edit?usp=sharing)
 
 ### Definition Of Done
