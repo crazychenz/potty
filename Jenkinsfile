@@ -85,7 +85,7 @@ pipeline {
             when { expression { params.TEST_ANDROID == true } }
             steps {
                 bat label: 'GUT',
-                    script: 'C:\\Windows\\system32\\cmd.exe /C START /MIN bash /mnt/c/projects/stable/potty/run.sh'
+                    script: 'C:\\Windows\\system32\\cmd.exe /C START /MIN C:\\Windows\\system32\\bash.exe /mnt/c/projects/stable/potty/run.sh'
             }
         }
     }
