@@ -34,6 +34,9 @@ pipeline {
         booleanParam(name: 'TEST_WINDOWSDESKTOP',
             defaultValue: true,
             description: 'Test Windows Desktop')
+        booleanParam(name: 'TEST_ANDROID',
+            defaultValue: true,
+            description: 'Test Android')
     }
     stages {
         stage('Checkout') {
@@ -76,6 +79,13 @@ pipeline {
                         '--path "' + env.WORKSPACE + '\\godot" ' +
                         '-s addons/gutlite/gutlite_cli.gd ' +
                         '-gtest=res://test/unit/test_simple.gd -gexit '
+            }
+        }
+        stage('Test-Android') {
+            when { expression { params.TEST_ANDROID == true } }
+            steps {
+                bat label: 'GUT',
+                    script: 'C:\\Windows\\System32\\bash.exe /mnt/c/projects/stable/potty/run.sh'
             }
         }
     }
