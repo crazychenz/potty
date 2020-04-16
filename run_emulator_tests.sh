@@ -2,7 +2,8 @@
 
 AVD_IMAGE=Pixel-API28-v9.0-1080x1920-x86
 APP_NAME=org.godotengine.pottytime
-APK_PATH=/mnt/c/projects/stable/potty/releases/PottyTime.apk
+#APK_PATH=/mnt/c/projects/stable/potty/releases/PottyTime.apk
+APK_PATH=$(pwd)/PottyTime-Android.apk
 
 EMULATOR=/mnt/d/android-sdk/emulator/emulator.exe
 PLATTOOLS=/mnt/d/android-sdk/platform-tools
