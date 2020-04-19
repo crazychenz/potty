@@ -3,57 +3,98 @@ extends Node
 var controller
 
 
-func controller_ready(controller):
-	self.controller = controller
+func disable_all_processing():
+    # We want no processing until controller_ready()
+    set_process(false)
+    set_process_input(false)
+    set_process_unhandled_input(false)
+    set_process_unhandled_key_input(false)
 
-	# TODO: Setup local signals
+
+func enable_all_processing():
+    set_process(true)
+    set_process_input(true)
+    set_process_unhandled_input(true)
+    set_process_unhandled_key_input(true)
+
+
+func _init():
+    disable_all_processing()
+
+
+func _ready():
+    disable_all_processing()
+
+
+func controller_ready(controller):
+    self.controller = controller
+
+    # TODO: Setup local signals
+    
+    enable_all_processing()
 
 
 # All HID input should hit this function
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		_on_keyboard_input(event)
-	elif event is InputEventMouse:
-		_on_mouse_input(event)
+    if event is InputEventKey:
+        _on_keyboard_input(event)
+    elif event is InputEventMouse:
+        _on_mouse_input(event)
 
 
+"""
+We put this here instead of Controller because we want just one set of
+input handling code, whereas this can handle many different sources of
+input.
+
+For example: We use Input class for keyboard at the moment, but we
+could easily add a touchscreen keyboard or a controller and have buttons
+mapped to the same controller actions.
+"""
+# Handle keyboard inputs
 func _on_keyboard_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("ui_right"):
-		controller.player_move_right(Input.is_action_pressed("ui_select"))
-	if Input.is_action_just_pressed("ui_left"):
-		controller.player_move_left(Input.is_action_pressed("ui_select"))
-	if Input.is_action_just_pressed("ui_up"):
-		controller.player_move_up(Input.is_action_pressed("ui_select"))
-	if Input.is_action_just_pressed("ui_down"):
-		controller.player_move_down(Input.is_action_pressed("ui_select"))
+    if Input.is_action_just_pressed("ui_right"):
+        controller.move_right()
+    elif Input.is_action_just_pressed("ui_left"):
+        controller.move_left()
+    elif Input.is_action_just_pressed("ui_up"):
+        controller.move_up()
+    elif Input.is_action_just_pressed("ui_down"):
+        controller.move_down()
+    elif Input.is_action_just_pressed("ui_select"):
+        controller.set_pulling(true)
+    elif Input.is_action_just_released("ui_select"):
+        controller.set_pulling(false)
 
 
+# Handle mouse inputs
 var mouse_down_pos : Vector2
 func _on_mouse_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.pressed == true:
-			mouse_down_pos = event.position
-			print("Down at: %s" % mouse_down_pos)
-			return
-		else:
-			if mouse_down_pos == null:
-				return
-			if mouse_down_pos.distance_to(event.position) < 4:
-				# No single click actions supported at this time.
-				pass
-			else:
-				# We dragged something
-				var angle = rad2deg(mouse_down_pos.angle_to_point(event.position))
-				if angle > (180 - 15) and angle < (180 + 15):
-					controller.player_move_right(mouse_down_pos)
-				elif angle > 15 and angle > (360 - 15):
-				   controller.player_move_left(mouse_down_pos)
-				elif angle > (90 - 15) and angle < (90 + 15):
-				   controller.player_move_up(mouse_down_pos)
-				elif angle > (270 - 15) and angle < (270 + 15):
-				   controller.player_move_down(mouse_down_pos)
-					
-				print("Angle To: %s" % [angle])
+    if event is InputEventMouseButton:
+        if event.pressed == true:
+            mouse_down_pos = event.position
+            #print("Down at: %s" % mouse_down_pos)
+            return
+        else:
+            if mouse_down_pos == null:
+                return
+            if mouse_down_pos.distance_to(event.position) < 4:
+                # No single click actions supported at this time.
+                pass
+            else:
+                # We dragged something
+                var angle = rad2deg(mouse_down_pos.angle_to_point(event.position))
+                #print("Angle To: %s" % [angle])
+                controller.set_touch_origin(mouse_down_pos)
+                if angle > (180 - 15) and angle < (180 + 15):
+                    controller.move_right()
+                elif angle > 15 and angle > (360 - 15):
+                    controller.move_left()
+                elif angle > (90 - 15) and angle < (90 + 15):
+                    controller.move_up()
+                elif angle > (270 - 15) and angle < (270 + 15):
+                    controller.move_down()
+                    
 
 #			# We only allow moving in a single axis at a time.
 #			if (grid_pos.x != mouse_down_grid_pos.x and grid_pos.y != mouse_down_grid_pos.y) or \

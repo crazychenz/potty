@@ -4,12 +4,12 @@ var controller
 var presentation
 
 func ready(presentation):
-	pass
+    pass
 
 func controller_ready(controller):
-	self.controller = controller
+    self.controller = controller
 
-	# TODO: Setup local signals
+    # TODO: Setup local signals
 
 
 
@@ -21,9 +21,6 @@ func controller_ready(controller):
 #
 #
 #onready var model = get_parent()
-#
-#onready var board_offset := Vector2(75, 75)
-#onready var tile_dims := Vector2(64, 64)
 #
 #
 ##func _fini():

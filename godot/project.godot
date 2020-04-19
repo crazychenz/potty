@@ -28,12 +28,18 @@ _global_script_classes=[ {
 "class": "GridObject",
 "language": "GDScript",
 "path": "res://GridObject.gd"
+}, {
+"base": "Object",
+"class": "Transaction",
+"language": "GDScript",
+"path": "res://Transaction.gd"
 } ]
 _global_script_class_icons={
 "ActionEvent": "",
 "ActionEventMove": "",
 "Grid": "",
-"GridObject": ""
+"GridObject": "",
+"Transaction": ""
 }
 
 [application]

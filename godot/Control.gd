@@ -3,39 +3,76 @@ extends Node
 var presentation
 var model
 
+
+
+
+
+
+## User Input State
+#var pulling
+#var touch_origin
+#
+#
 func ready(presentation, model):
-	self.presentation = presentation
-	self.model = model
+    self.presentation = presentation
+    self.model = model
 
-func player_move_right(select):
-	if select is Vector2:
-		pass
-	elif select is bool:
-		model.player_move_right(select)
-
-func player_move_left(select):
-	if select is Vector2:
-		pass
-	elif select is bool:
-		model.player_move_left(select)
-
-func player_move_up(select):
-	if select is Vector2:
-		pass
-	elif select is bool:
-		model.player_move_up(select)
-
-func player_move_down(select):
-	if select is Vector2:
-		pass
-	elif select is bool:
-		model.player_move_down(select)
+"""
+User input is terminated by some actor moving. If the user is grabbing an
+object and that object moves, the player will move with the object.
+"""
 
 
-#onready var model = get_node("Model")
-#onready var presentation = get_node("Presentation")
+
 #
 #
+#func move_right(select):
+#    pass
+#
+#
+#func move_left(select):
+#    pass
+#
+#
+#func move_up(select):
+#    pass
+#
+#
+#func move_down():
+#    #model.player_move_down(select)
+#    pass
+#
+#
+#func set_pulling(pulling = true):
+#    self.pulling = pulling
+#
+#
+#func drag(down_position, up_position):
+#    var grid_pos = ((down_position - presentation.board_offset) / presentation.tile_dims)
+#
+#    if angle > (180 - 15) and angle < (180 + 15):
+#        move_right()
+#    elif angle > 15 and angle > (360 - 15):
+#        move_left()
+#    elif angle > (90 - 15) and angle < (90 + 15):
+#        move_up()
+#    elif angle > (270 - 15) and angle < (270 + 15):
+#        move_down()
+#
+#
+#    if grid_pos != model.player.get_grid_position():
+#
+#
+#func set_touch_origin(origin):
+#    var grid_pos = ((origin - presentation.board_offset) / presentation.tile_dims)
+#    # Account for the floating point errors
+#    grid_pos.x = int(round(grid_pos.x))
+#    grid_pos.y = int(round(grid_pos.y))
+    
+    
+        
+    
+
 #func player_inline(start, end) -> bool:
 #	if (end.x != start.x and end.y != start.y) or \
 #			end == start:

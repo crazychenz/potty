@@ -64,7 +64,7 @@ func test_scripts(opts):
         script.before_all()
         yield(get_tree().create_timer(0.1), "timeout")
         
-        print("size %s" % script.get_method_list().size())
+        #print("size %s" % script.get_method_list().size())
         
         for method in script.get_method_list():
             
@@ -72,7 +72,7 @@ func test_scripts(opts):
                 
                 var script_result = null
                 
-                print("  %s" % method.name)
+                #print("  %s" % method.name)
                 
                 script.before_each()
                 
@@ -84,9 +84,12 @@ func test_scripts(opts):
                 
                 script.after_each()
                 
-                var fail_pass_text_end = script._fail_pass_text.size() - 1
-                if fail_pass_text_end >= 0:
-                    print(script._fail_pass_text[fail_pass_text_end])
+                for fail_pass_text in script._fail_pass_text:
+                    if fail_pass_text.begins_with("FAILED"):
+                        print(fail_pass_text)
+                #var fail_pass_text_end = script._fail_pass_text.size() - 1
+                #if fail_pass_text_end >= 0:
+                #    print(script._fail_pass_text[fail_pass_text_end])
         
         yield(get_tree().create_timer(0.1), "timeout")
         script.after_all()
