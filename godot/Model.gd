@@ -1,4 +1,6 @@
-extends Node
+extends Reference
+
+class_name Model
 
 signal game_over
 
@@ -25,126 +27,126 @@ var potty
 
 var last_grid_updated = 0
 
-onready var view = get_node("View")
+#REM onready var view = get_node("View")
 
 var levels := {
-    'demo': {
-        'layout': [
-            [' ', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', 'D', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'T', ' ', ' '],
-            [' ', ' ', ' ', ' ', 'W', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P'],
+	'demo': {
+		'layout': [
+			[' ', '*', ' ', ' ', ' ', ' ', ' ', ' '],
+			[' ', 'D', ' ', ' ', ' ', ' ', ' ', ' '],
+			[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+			[' ', ' ', ' ', ' ', ' ', 'T', ' ', ' '],
+			[' ', ' ', ' ', ' ', 'W', ' ', ' ', ' '],
+			[' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
+			[' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
+			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P'],
 
-        ]
-    },
-    1: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', '*', ' ', 'T', ' ', ' ', 'P', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    2: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', 'D', 'T', ' ', 'P', ' '],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    3: {
-        'layout': [
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', ' ', 'T', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'P', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    4: {
-        'layout': [
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'T', 'W', 'W', 'W'],
-            ['W', 'W', 'W', ' ', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'D', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'P', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    5: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['P', 'D', ' ', 'D', ' ', 'D', 'T', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
-            ['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    6: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['P', 'D', ' ', 'C', ' ', 'D', ' ', ' '],
-            ['W', ' ', 'W', ' ', 'W', 'T', 'W', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
-            ['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    7: {
-        'layout': [
-            ['*', ' ', 'T', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', ' ', ' ', ' '],
-            [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'C'],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'P'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
+		]
+	},
+	1: {
+		'layout': [
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+			[' ', '*', ' ', 'T', ' ', ' ', 'P', ' '],
+			[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
+	2: {
+		'layout': [
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
+			[' ', '*', ' ', 'D', 'T', ' ', 'P', ' '],
+			[' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
+	3: {
+		'layout': [
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', '*', ' ', ' ', 'T', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'P', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+		]
+	},
+	4: {
+		'layout': [
+			[' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', '*', ' ', ' ', 'W', 'W', 'W', 'W'],
+			[' ', ' ', ' ', ' ', 'T', 'W', 'W', 'W'],
+			['W', 'W', 'W', ' ', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'D', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'P', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
+	5: {
+		'layout': [
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['P', 'D', ' ', 'D', ' ', 'D', 'T', ' '],
+			['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
+			['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
+			['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
+			['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
+	6: {
+		'layout': [
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+			['P', 'D', ' ', 'C', ' ', 'D', ' ', ' '],
+			['W', ' ', 'W', ' ', 'W', 'T', 'W', ' '],
+			['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
+			['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
+			['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
+	7: {
+		'layout': [
+			['*', ' ', 'T', ' ', ' ', ' ', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', 'W', ' ', ' '],
+			['W', 'W', 'W', 'W', 'W', ' ', ' ', ' '],
+			[' ', ' ', 'C', ' ', ' ', ' ', ' ', 'C'],
+			[' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
+			[' ', ' ', 'W', 'W', 'W', 'W', 'W', 'W'],
+			[' ', ' ', 'C', ' ', ' ', ' ', ' ', 'P'],
+			['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+		]
+	},
 }
 
 func fini():
-    if is_instance_valid(player):
-        #player.free()
-        pass
-    if is_instance_valid(potty):
-        #potty.free()
-        pass
-    if is_instance_valid(bg_grid):
-        bg_grid._fini()
-        bg_grid.call_deferred("free")
-    if is_instance_valid(grid):
-        grid._fini()
-        grid.call_deferred("free")
+	if is_instance_valid(player):
+		#player.free()
+		pass
+	if is_instance_valid(potty):
+		#potty.free()
+		pass
+	if is_instance_valid(bg_grid):
+		bg_grid._fini()
+		bg_grid.call_deferred("free")
+	if is_instance_valid(grid):
+		grid._fini()
+		grid.call_deferred("free")
 
 func _notification(what):
-    if what == NOTIFICATION_PREDELETE:
-        print("Removing Model")
-        fini()
+	if what == NOTIFICATION_PREDELETE:
+		print("Removing Model")
+		fini()
 
 
 
@@ -176,63 +178,65 @@ func _notification(what):
 #	grid.set_position(potty.get_position(), potty)
 
 func init_level(key) -> void:
-    var layout = levels[key].layout
+	var layout = levels[key].layout
 
-    var obj_map = {
-        '*': {
-            'sprite': TYPE_NPC,
-            'behavior': ''
-        },
-        'P': {
-            'sprite': TYPE_POTTY,
-            'behavior': 'potty_interact'
-        },
-        'W': {
-            'sprite': TYPE_BRICKWALL,
-            'behavior': 'static_interact'
-        },
-        'C': {
-            'sprite': TYPE_CHICKEN,
-            'behavior': 'consumable_toy_interact'
-        },
-        'T': {
-            'sprite': TYPE_BABY,
-            'behavior': 'baby_interact'
-        },
-        'D': {
-            'sprite': TYPE_DUCK,
-            'behavior': 'move_action_event'
-        }
-    }
+	var obj_map = {
+		'*': {
+			'sprite': TYPE_NPC,
+			'behavior': ''
+		},
+		'P': {
+			'sprite': TYPE_POTTY,
+			'behavior': 'potty_interact'
+		},
+		'W': {
+			'sprite': TYPE_BRICKWALL,
+			'behavior': 'static_interact'
+		},
+		'C': {
+			'sprite': TYPE_CHICKEN,
+			'behavior': 'consumable_toy_interact'
+		},
+		'T': {
+			'sprite': TYPE_BABY,
+			'behavior': 'baby_interact'
+		},
+		'D': {
+			'sprite': TYPE_DUCK,
+			'behavior': 'move_action_event'
+		}
+	}
 
-    for y in range(len(layout)):
-        for x in range(len(layout[y])):
-            if layout[y][x] == ' ':
-                continue
-            var obj = GridObject.new(obj_map[layout[y][x]].sprite, Vector2(x, y), grid)
-            #print("Leaked thing %s" % obj)
-            if obj_map[layout[y][x]].behavior != '':
-                var ref = funcref(obj, obj_map[layout[y][x]].behavior)
-                obj.set_interact(ref)
-            grid.set_position(obj.get_position(), obj)
-            if layout[y][x] == '*':
-                player = obj
-            elif layout[y][x] == 'P':
-                potty = obj
+	for y in range(len(layout)):
+		for x in range(len(layout[y])):
+			if layout[y][x] == ' ':
+				continue
+			var obj = Actor.new(Vector2(x, y))
+			#print("Leaked thing %s" % obj)
+			#if obj_map[layout[y][x]].behavior != '':
+			#	var ref = funcref(obj, obj_map[layout[y][x]].behavior)
+			#	obj.set_interact(ref)
+			grid.set_position(obj.get_grid_position(), obj)
+			if layout[y][x] == '*':
+				player = obj
+			elif layout[y][x] == 'P':
+				potty = obj
 
 
-func ready() -> void:
-    grid.init_empty_grid(GRID_ROWS, GRID_COLS)
-    bg_grid.init_empty_grid(GRID_ROWS, GRID_COLS)
+func ready(level) -> void:
+	grid.init_empty_grid(GRID_ROWS, GRID_COLS)
+	bg_grid.init_empty_grid(GRID_ROWS, GRID_COLS)
 
-    #init_level_demo()
-    init_level(LevelState.current_level)
-    #init_level('demo')
+	#init_level_demo()
+	init_level(level)
+	#init_level('demo')
 
+func player_pretend(action: Action) -> Transaction:
+	return player.pretend(action)
 
 # This is where we receive new action transactions.
 func send_transaction(xaction : Transaction):
-    pass    
+	pass    
 
 
 #func player_move_right(pulling = false):

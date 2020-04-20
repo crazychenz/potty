@@ -1,9 +1,9 @@
-extends Object
+extends Reference
 
 class_name Grid
 
 # This must only be called once a complete transaction has been applied
-signal updated()
+#signal updated()
 
 var grid_array : Dictionary = {}
 var _rows
@@ -14,7 +14,7 @@ func _fini() -> void:
     for x in range(0, _cols):
         for y in range(0, _rows):
             if is_instance_valid(grid_array[x][y]):
-                grid_array[x][y].queue_free()
+                grid_array[x][y].call_deferred("free")
                 grid_array[x][y] = null
 
 

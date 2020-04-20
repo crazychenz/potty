@@ -14,8 +14,8 @@ var model
 #
 #
 func ready(presentation, model):
-    self.presentation = presentation
-    self.model = model
+	self.presentation = presentation
+	self.model = model
 
 """
 User input is terminated by some actor moving. If the user is grabbing an
@@ -68,10 +68,10 @@ object and that object moves, the player will move with the object.
 #    # Account for the floating point errors
 #    grid_pos.x = int(round(grid_pos.x))
 #    grid_pos.y = int(round(grid_pos.y))
-    
-    
-        
-    
+	
+	
+		
+	
 
 #func player_inline(start, end) -> bool:
 #	if (end.x != start.x and end.y != start.y) or \

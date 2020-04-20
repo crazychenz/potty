@@ -4,12 +4,12 @@ var controller
 var presentation
 
 func ready(presentation):
-    pass
+	pass
 
 func controller_ready(controller):
-    self.controller = controller
+	self.controller = controller
 
-    # TODO: Setup local signals
+	# TODO: Setup local signals
 
 
 
