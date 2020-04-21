@@ -1,8 +1,7 @@
 extends Actor
 
+class_name Player
+
 func _init(position).(position, "player"):
     pass
-
-func pretend(action, model) -> Transaction:
-    return action.perform(self)
 

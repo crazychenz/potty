@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Actor.gd"
 }, {
+"base": "Reference",
+"class": "Command",
+"language": "GDScript",
+"path": "res://Command.gd"
+}, {
 "base": "Object",
 "class": "Grid",
 "language": "GDScript",
@@ -44,10 +49,15 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Model.gd"
 }, {
-"base": "Action",
-"class": "MoveAction",
+"base": "Command",
+"class": "MoveCommand",
 "language": "GDScript",
-"path": "res://MoveAction.gd"
+"path": "res://MoveCommand.gd"
+}, {
+"base": "Action",
+"class": "MoveDirAction",
+"language": "GDScript",
+"path": "res://MoveDirAction.gd"
 }, {
 "base": "Object",
 "class": "Transaction",
@@ -59,10 +69,12 @@ _global_script_class_icons={
 "ActionEvent": "",
 "ActionEventMove": "",
 "Actor": "",
+"Command": "",
 "Grid": "",
 "GridObject": "",
 "Model": "",
-"MoveAction": "",
+"MoveCommand": "",
+"MoveDirAction": "",
 "Transaction": ""
 }
 
@@ -77,6 +89,7 @@ config/icon="res://icon.png"
 g="*res://global.gd"
 PlayerState="*res://PlayerState.gd"
 LevelState="*res://LevelState.gd"
+c="*res://classes.gd"
 
 [display]
 

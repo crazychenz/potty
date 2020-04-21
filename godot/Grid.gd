@@ -17,6 +17,16 @@ func _fini() -> void:
                 grid_array[x][y].call_deferred("free")
                 grid_array[x][y] = null
 
+# Debug function for troubleshooting movement
+func print_grid() -> void:
+    for y in range(0, _rows):
+        var line = ""
+        for x in range(0, _cols):
+            if grid_array[x][y] == null:
+                line += ". "
+            else:
+                line += "%s " % grid_array[x][y].type[0]
+        print(line)
 
 func is_valid_coords(p1: int, p2 : int) -> bool:
     return not (p1 < 0 or p1 > (_rows - 1) or p2 < 0 or p2 > (_cols - 1))

@@ -215,16 +215,21 @@ func init_level(key) -> void:
         for x in range(len(layout[y])):
             if layout[y][x] == ' ':
                 continue
-            var obj = Actor.new(Vector2(x, y))
+            var obj
+            if layout[y][x] == '*':
+                obj = c.Player.new(Vector2(x, y))
+                player = obj
+            elif layout[y][x] == 'P':
+                obj = Actor.new(Vector2(x, y), layout[y][x])
+                potty = obj
+            else:
+                obj = Actor.new(Vector2(x, y), layout[y][x])
             #print("Leaked thing %s" % obj)
             #if obj_map[layout[y][x]].behavior != '':
             #	var ref = funcref(obj, obj_map[layout[y][x]].behavior)
             #	obj.set_interact(ref)
             grid.set_position(obj.get_grid_position(), obj)
-            if layout[y][x] == '*':
-                player = obj
-            elif layout[y][x] == 'P':
-                potty = obj
+            
 
 
 func ready(level) -> void:
@@ -235,18 +240,27 @@ func ready(level) -> void:
     init_level(level)
     #init_level('demo')
 
+func is_valid_position(grid_position) -> bool:
+    return grid.is_valid_position(grid_position)
+
 func get_entity_at(grid_position):
     if not grid.is_valid_position(grid_position):
         return null
     return grid.get_position(grid_position)
 
-func player_pretend(action) -> Transaction:
-    return player.pretend(action, self)
+func player_perform(action) -> Transaction:
+    return player.perform(action)
 
 # This is where we receive new action transactions.
-func send_transaction(xaction : Transaction):
-    pass    
+func commit_xaction(xaction : Transaction):
+    # Remove all the commanded actors from the grid
+    for command in xaction.commands:
+        var pos = command.actor.grid_position
+        grid._set_coords(pos.x, pos.y, null)
 
+    # Apply all the commands to actors in the grid
+    for command in xaction.commands:
+        command.perform()
 
 #func player_move_right(pulling = false):
 #	player.handle_action(ActionEventMove.new(player, ActionEventMove.RIGHT, pulling))

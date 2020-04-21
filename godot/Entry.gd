@@ -6,7 +6,7 @@ var opts = {
     'tests': [
         #'res://test/unit/test_simple.gd'
         #'res://test/unit/test_main_controller.gd'
-        'res://test/unit/test_grid.gd',
+        #'res://test/unit/test_grid.gd',
         'res://test/unit/test_model.gd'
     ]
 }

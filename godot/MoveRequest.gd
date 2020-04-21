@@ -14,16 +14,19 @@ func _init(dir: Vector2):
 
 func perform(actor) -> Transaction:
     var xaction = Transaction.new()
+    _perform(actor, xaction)
+    return xaction
 
+func _perform(actor, xaction) -> bool:
     var new_pos = actor.get_grid_position() + direction
 
     var target = model.get_entity_at(new_pos)
+    # If entity can move to location, return true
     if target == null:
-        xaction.append(MoveAction)
+        xaction.append(MoveTo.new(new_pos))
+        return true
 
-		# Check if there is an object, wall, etc
-		# If wall, return a do nothing return
-		# If nothing, return a transaction of 1 action
-        # If something(s) that can be pushed, return transaction
-
-    return xaction
+    # Check if there is an object, wall, etc
+    if target.can
+    # If wall, return a do nothing return
+    # If something(s) that can be pushed, return transaction
