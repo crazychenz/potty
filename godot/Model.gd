@@ -2,6 +2,12 @@ extends Reference
 
 class_name Model
 
+signal updated(xaction)
+
+var Player = g.import_actor("Player")
+var Potty = g.import_actor("Potty")
+var Actor = g.import_actor("Actor")
+
 signal game_over
 
 const GRID_ROWS = 8
@@ -30,108 +36,6 @@ var potty
 
 var last_grid_updated = 0
 
-#REM onready var view = get_node("View")
-
-var levels := {
-    'demo': {
-        'layout': [
-            [' ', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', 'D', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'T', ' ', ' '],
-            [' ', ' ', ' ', ' ', 'W', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', 'C', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P'],
-
-        ]
-    },
-    1: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', '*', ' ', 'T', ' ', ' ', 'P', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    2: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', 'D', 'T', ' ', 'P', ' '],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    3: {
-        'layout': [
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', ' ', 'T', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'P', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    4: {
-        'layout': [
-            [' ', ' ', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', '*', ' ', ' ', 'W', 'W', 'W', 'W'],
-            [' ', ' ', ' ', ' ', 'T', 'W', 'W', 'W'],
-            ['W', 'W', 'W', ' ', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'D', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'P', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    5: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['P', 'D', ' ', 'D', ' ', 'D', 'T', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
-            ['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    6: {
-        'layout': [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['P', 'D', ' ', 'C', ' ', 'D', ' ', ' '],
-            ['W', ' ', 'W', ' ', 'W', 'T', 'W', ' '],
-            ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
-            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', ' '],
-            ['W', '*', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-    7: {
-        'layout': [
-            ['*', ' ', 'T', ' ', ' ', ' ', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', 'W', ' ', ' '],
-            ['W', 'W', 'W', 'W', 'W', ' ', ' ', ' '],
-            [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'C'],
-            [' ', ' ', ' ', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', 'W', 'W', 'W', 'W', 'W', 'W'],
-            [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'P'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ]
-    },
-}
-
 func fini():
     if is_instance_valid(player):
         #player.free()
@@ -153,36 +57,7 @@ func _notification(what):
         #fini()
 
 
-
-#func init_level_demo() -> void:
-#	player = GridObject.new(TYPE_NPC, Vector2(1, 2), grid)
-#	grid.set_position(player.get_position(), player)
-#
-#	var wall = GridObject.new(TYPE_BRICKWALL, Vector2(4, 4), grid)
-#	wall.set_interact(funcref(wall, "static_interact"))
-#	grid.set_position(wall.get_position(), wall)
-#
-#	var duck = GridObject.new(TYPE_DUCK, Vector2(1, 3), grid)
-#	grid.set_position(duck.get_position(), duck)
-#
-#	var baby = GridObject.new(TYPE_BABY, Vector2(5, 3), grid)
-#	baby.set_interact(funcref(baby, "baby_interact"))
-#	grid.set_position(baby.get_position(), baby)
-#
-#	var chicken = GridObject.new(TYPE_CHICKEN, Vector2(5, 5), grid)
-#	chicken.set_interact(funcref(chicken, "consumable_interact"))
-#	grid.set_position(chicken.get_position(), chicken)
-#
-#	chicken = GridObject.new(TYPE_CHICKEN, Vector2(5, 6), grid)
-#	chicken.set_interact(funcref(chicken, "consumable_interact"))
-#	grid.set_position(chicken.get_position(), chicken)
-#
-#	potty = GridObject.new(TYPE_POTTY, Vector2(7, 7), grid)
-#	potty.set_interact(funcref(potty, "potty_interact"))
-#	grid.set_position(potty.get_position(), potty)
-
-func init_level(key) -> void:
-    var layout = levels[key].layout
+func init_level(layout) -> void:
 
     var obj_map = {
         '*': {
@@ -217,28 +92,24 @@ func init_level(key) -> void:
                 continue
             var obj
             if layout[y][x] == '*':
-                obj = c.Player.new(Vector2(x, y))
+                obj = Player.new(Vector2(x, y), self)
                 player = obj
             elif layout[y][x] == 'P':
-                obj = Actor.new(Vector2(x, y), layout[y][x])
+                obj = Potty.new(Vector2(x, y), self)
                 potty = obj
             else:
-                obj = Actor.new(Vector2(x, y), layout[y][x])
-            #print("Leaked thing %s" % obj)
-            #if obj_map[layout[y][x]].behavior != '':
-            #	var ref = funcref(obj, obj_map[layout[y][x]].behavior)
-            #	obj.set_interact(ref)
+                obj = Actor.new(Vector2(x, y), layout[y][x], self)
             grid.set_position(obj.get_grid_position(), obj)
             
 
+func grid_as_string() -> String:
+    return grid.as_string()
 
-func ready(level) -> void:
+
+func ready(layout) -> void:
     grid.init_empty_grid(GRID_ROWS, GRID_COLS)
     bg_grid.init_empty_grid(GRID_ROWS, GRID_COLS)
-
-    #init_level_demo()
-    init_level(level)
-    #init_level('demo')
+    init_level(layout)
 
 func is_valid_position(grid_position) -> bool:
     return grid.is_valid_position(grid_position)
@@ -261,6 +132,8 @@ func commit_xaction(xaction : Transaction):
     # Apply all the commands to actors in the grid
     for command in xaction.commands:
         command.perform()
+    
+    emit_signal("updated", xaction)
 
 #func player_move_right(pulling = false):
 #	player.handle_action(ActionEventMove.new(player, ActionEventMove.RIGHT, pulling))

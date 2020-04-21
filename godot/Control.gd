@@ -4,45 +4,51 @@ var presentation
 var model
 
 
+# While tweening, queue the transactions here.
+var xaction_queue = []
+
+
+func ready(presentation_param, model_param):
+    presentation = presentation_param
+    model = model_param
+    
+    model.connect("updated", self, "_on_model_updated")
+
+
+func _on_MainMenuButton_pressed() -> void:
+    g.change_scene("res://Title.tscn")
+
+
+func _on_PlayAgainButton_pressed() -> void:
+    g.change_scene("res://Main.tscn")
+
+
+func player_perform(action) -> void:
+    var xaction = model.player_perform(action)
+    if xaction != null:
+        queue_xaction(xaction)
+
+
+func queue_xaction(xaction) -> void:
+    # TODO: Do tweening here.
+    # Once tweening is complete enough, commit state.
+    model.commit_xaction(xaction)
+
+
+func _on_model_updated(xaction = null):
+    presentation.update(model.grid_as_string())
 
 
 
 
-## User Input State
-#var pulling
-#var touch_origin
-#
-#
-func ready(presentation, model):
-	self.presentation = presentation
-	self.model = model
-
-"""
-User input is terminated by some actor moving. If the user is grabbing an
-object and that object moves, the player will move with the object.
-"""
 
 
 
-#
-#
-#func move_right(select):
-#    pass
-#
-#
-#func move_left(select):
-#    pass
-#
-#
-#func move_up(select):
-#    pass
-#
-#
-#func move_down():
-#    #model.player_move_down(select)
-#    pass
-#
-#
+
+
+
+
+
 #func set_pulling(pulling = true):
 #    self.pulling = pulling
 #
@@ -68,10 +74,10 @@ object and that object moves, the player will move with the object.
 #    # Account for the floating point errors
 #    grid_pos.x = int(round(grid_pos.x))
 #    grid_pos.y = int(round(grid_pos.y))
-	
-	
-		
-	
+    
+    
+        
+    
 
 #func player_inline(start, end) -> bool:
 #	if (end.x != start.x and end.y != start.y) or \

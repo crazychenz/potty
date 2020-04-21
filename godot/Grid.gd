@@ -18,15 +18,17 @@ func _fini() -> void:
                 grid_array[x][y] = null
 
 # Debug function for troubleshooting movement
-func print_grid() -> void:
+func as_string() -> String:
+    var state_string = ""
     for y in range(0, _rows):
-        var line = ""
         for x in range(0, _cols):
             if grid_array[x][y] == null:
-                line += ". "
+                state_string += ". "
             else:
-                line += "%s " % grid_array[x][y].type[0]
-        print(line)
+                state_string += "%s " % grid_array[x][y].type[0]
+        state_string += "\n"
+    state_string += "\n"
+    return state_string
 
 func is_valid_coords(p1: int, p2 : int) -> bool:
     return not (p1 < 0 or p1 > (_rows - 1) or p2 < 0 or p2 > (_cols - 1))
@@ -71,6 +73,8 @@ func get_position(v : Vector2):
 
 func _set_coords(x: int, y: int, obj):
     self.grid_array[int(x)][int(y)] = obj
+    if obj != null:
+        obj.grid_position = Vector2(x, y)
 
 
 func set_coords(x: int, y: int, obj):

@@ -1,12 +1,33 @@
 extends Action
 
+var MoveDirAction = g.import_action("MoveDirAction")
+var MoveCommand = g.import_command("MoveCommand")
+
 # Given at new()
 var direction
-var model
 
-func _init(dir: Vector2, model_param):
+
+func _init(dir: Vector2):
     direction = dir
-    model = model_param
+
+
+#static func right():
+#    var action = MoveDirAction.new(Vector2(1, 0))
+#    var soemthing = 1
+#    return action
+#
+#
+#static func left():
+#    return MoveDirAction.new(Vector2(-1, 0))
+#
+#
+#static func up():
+#    return MoveDirAction.new(Vector2(0, -1))
+#
+#
+#static func down():
+#    return MoveDirAction.new(Vector2(0, 1))
+
 
 func perform(actor) -> Transaction:
     var xaction = Transaction.new()
@@ -15,7 +36,13 @@ func perform(actor) -> Transaction:
         xaction = null
     return xaction
 
+
+# How do we determine if action is allowed on actor?
+# - Can actor reject actions?
+# - Do actions verify they can do X with actor attributes?
+
 func _perform(actor, xaction) -> bool:
+    var model = actor.model
     var new_pos = actor.get_grid_position() + direction
 
     if not model.is_valid_position(new_pos):
@@ -29,7 +56,7 @@ func _perform(actor, xaction) -> bool:
 
     # If there is an object in the way, see if we can
     # forward the same type of action onto it.
-    var action = c.MoveDirAction.new(direction, model)
+    var action = MoveDirAction.new(direction)
     var result = action._perform(target, xaction)
     if result == true:
         xaction.add_command(MoveCommand.new(actor, new_pos, model))

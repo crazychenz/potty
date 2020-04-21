@@ -1,22 +1,19 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://View.gd" type="Script" id=1]
-[ext_resource path="res://Model.gd" type="Script" id=2]
 [ext_resource path="res://Control.gd" type="Script" id=3]
 [ext_resource path="res://Main_UIControl.gd" type="Script" id=4]
 [ext_resource path="res://assets/fonts/noto/noto-regular-touchable.tres" type="DynamicFont" id=5]
 [ext_resource path="res://Main.gd" type="Script" id=6]
 [ext_resource path="res://Presentation.gd" type="Script" id=7]
 [ext_resource path="res://HIDInput.gd" type="Script" id=8]
+[ext_resource path="res://assets/fonts/noto/monofont.tres" type="DynamicFont" id=9]
 
 [node name="Main" type="Node"]
 script = ExtResource( 6 )
 
 [node name="Controller" type="Node" parent="."]
 script = ExtResource( 3 )
-
-[node name="Model" type="Node" parent="."]
-script = ExtResource( 2 )
 
 [node name="Presentation" type="Node" parent="."]
 script = ExtResource( 7 )
@@ -168,6 +165,21 @@ Move With:
 - Down Arrow (or S)
 
 Hold SPACEBAR while moving to pull adjacent object (if pullable)."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridOutput" type="RichTextLabel" parent="ViewWidgets"]
+margin_left = 169.0
+margin_top = 189.0
+margin_right = 577.0
+margin_bottom = 500.0
+custom_fonts/mono_font = ExtResource( 9 )
+custom_fonts/normal_font = ExtResource( 9 )
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+text = "This   test   should   me    monospace.
+That means this ends at the same place."
+scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
 }

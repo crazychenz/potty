@@ -1,6 +1,8 @@
 extends "res://addons/gutlite/test.gd"
 
 var Model = load("res://Model.gd")
+#var MoveDirAction = load("res://classes/actions/MoveDirAction.gd")
+var MoveDirAction = g.import_action("MoveDirAction")
 var model
 
 var test_level = 'demo'
@@ -79,15 +81,20 @@ func test_check_action():
     # transaction until a time when its deemed that the 
     # transaction should be committed to the model.
 
+    action = MoveDirAction.new(Vector2(0, -1), model)
+    xaction = model.player_perform(action)
+    assert_true(xaction == null, "Verify player can't move off top of map.")
+
     # Create action to move player right 1 space.
-    action = c.MoveDirAction.new(Vector2(1, 0), model)
+    action = MoveDirAction.new(Vector2(1, 0), model)
     xaction = model.player_perform(action)
-    print("XAction len: %s" % xaction.size())
+    assert_true(xaction.size() == 1, "Verify player can move right.")
 
-    action = c.MoveDirAction.new(Vector2(0, 1), model)
+    action = MoveDirAction.new(Vector2(0, 1), model)
     xaction = model.player_perform(action)
-    print("XAction len: %s" % xaction.size())
+    assert_true(xaction.size() == 2, "Verify player can push objects.")
 
+    model.grid.print_grid()
     model.commit_xaction(xaction)
     model.grid.print_grid()
     #xaction.unreference()

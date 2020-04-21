@@ -10,18 +10,24 @@ The DomainModel may signal to the Controller.
 
 """
 
+var Model = load("res://Model.gd")
+var model = Model.new()
+
 func _ready():
     # Deterministic startup procedure:
     
-    # TODO: This should probably be an object stored in a singleton
-    # Controller depends on DomainModel
-    $Model.ready(LevelState.current_level)
-    # View depends on PresentationModel
     $Presentation.ready()
     $ViewCanvas.ready($Presentation)
     $ViewWidgets.ready($Presentation)
+    
+    # Controller depends on DomainModel
+    model.ready(LevelState.levels[LevelState.current_level]['layout'])
+    # View depends on PresentationModel
+    
     # Controller initialization allows user interaction
-    $Controller.ready($Presentation, $Model)
+    $Controller.ready($Presentation, model)
     $ViewWidgets.controller_ready($Controller)
     $ViewCanvas.controller_ready($Controller)
     $HIDInput.controller_ready($Controller)
+    $Presentation.controller_ready($Controller)
+    model.emit_signal("updated")

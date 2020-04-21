@@ -4,6 +4,15 @@ onready var _root = get_node("/root")
 onready var _current_scene : Node  setget , get_current_scene
 onready var _current_scene_path : String setget , get_current_scene_path
 
+func import_action(action_name):
+    return load("res://classes/actions/%s.gd" % action_name)
+
+func import_actor(actor_name):
+    return load("res://classes/actors/%s.gd" % actor_name)
+
+func import_command(command_name):
+    return load("res://classes/commands/%s.gd" % command_name)
+
 func remove_node(node: Node) -> void:
     var parent = node.get_parent()
     parent.remove_child(node)
