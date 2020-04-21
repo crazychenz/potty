@@ -1,6 +1,7 @@
 #!/bin/sh
 
-/projects/stable/engine/Godot_v3.2.1-stable_win64.exe \
+#/projects/stable/engine/Godot_v3.2.1-stable_win64.exe \
+/projects/playground/godot/bin/godot.windows.tools.64.exe \
     -v --no-window -s addons/gutlite/gutlite_cli.gd -gexit \
     -gtest=res://test/unit/test_model.gd
 

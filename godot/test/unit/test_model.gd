@@ -30,8 +30,6 @@ func before_all():
 	
 func after_all():
 	pass
-	model.call_deferred("free")
-	model = null
 
 """
 Things to test:
@@ -75,14 +73,17 @@ func test_check_action():
 	var action
 	var xaction
 
-	# Create action to move play right 1 space.
-	action = MoveAction.new(Vector2(1, 0), model)
-	xaction = model.player_pretend(action)
+	# Actions are submitted to model. If actions
+	# are accepted, they are converted into uncommitted
+	# transactions until their animations meet a given 
+	# threshold.
+	# TODO: How to report rejected actions. (Signal? or FuncRef?)
 
-	action.unreference()
-	action.unreference()
-	xaction.unreference()
-	xaction.unreference()
+	# Create action to move player right 1 space.
+	action = MoveAction.new(Vector2(1, 0))
+	xaction = model.player_pretend(action)
+	#xaction.unreference()
+	#xaction.unreference()
 	#model.commit(xaction)
 
 	#assert_true(model.check_action(action), "Check action to move play right 1 space.")

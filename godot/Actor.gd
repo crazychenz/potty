@@ -26,5 +26,5 @@ func get_type() -> String:
     return type
 
 
-func pretend(action: Action) -> Transaction:
+func pretend(action, model) -> Transaction:
     return action.perform(self)
