@@ -37,8 +37,6 @@ func after_all():
 Things to test:
  - ready
  - init_level
- - check_action
- - check_action_recursive
  - perform_transaction
  - check
  - fini

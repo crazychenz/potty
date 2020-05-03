@@ -1,0 +1,8 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[ext_resource path="res://PottyModel.gdnlib" type="GDNativeLibrary" id=1]
+
+[resource]
+resource_name = "PottyModel"
+class_name = "PottyModel"
+library = ExtResource( 1 )

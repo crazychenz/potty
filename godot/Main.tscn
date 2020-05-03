@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://View.gd" type="Script" id=1]
+[ext_resource path="res://Model.gdns" type="Script" id=2]
 [ext_resource path="res://Control.gd" type="Script" id=3]
 [ext_resource path="res://Main_UIControl.gd" type="Script" id=4]
 [ext_resource path="res://assets/fonts/noto/noto-regular-touchable.tres" type="DynamicFont" id=5]
@@ -197,3 +198,6 @@ margin_top = 179.0
 margin_right = 1407.0
 margin_bottom = 193.0
 text = "Each time the player is moved, the bladder fills up a bit."
+
+[node name="Model" type="Node" parent="."]
+script = ExtResource( 2 )

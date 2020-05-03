@@ -1,0 +1,124 @@
+#!python
+import os, subprocess
+
+opts = Variables([], ARGUMENTS)
+
+#Decider('timestamp-newer')
+# Gets the standard flags CC, CCX, etc.
+env = DefaultEnvironment().Clone()
+# Ensure we get terminal colors.
+env['ENV']['TERM'] = os.environ['TERM']
+env.VariantDir('build', 'src')
+
+# Define our options
+opts.Add(EnumVariable('target', "Compilation target", 'debug', ['d', 'debug', 'r', 'release']))
+opts.Add(EnumVariable('platform', "Compilation platform", '', ['', 'windows', 'x11', 'linux', 'osx']))
+opts.Add(EnumVariable('p', "Compilation target, alias for 'platform'", '', ['', 'windows', 'x11', 'linux', 'osx']))
+
+opts.Add(BoolVariable('use_llvm', "Use the LLVM / Clang compiler", 'no'))
+
+opts.Add(PathVariable('target_path', 'The path where the lib is installed.', 'bin/'))
+opts.Add(PathVariable('target_name', 'The library name.', 'libpottymodel', PathVariable.PathAccept))
+
+# Local dependency paths, adapt them to your setup
+godot_headers_path = "godot-cpp/godot_headers/"
+cpp_bindings_path = "godot-cpp/"
+cpp_library = "libgodot-cpp"
+
+# only support 64 at this time..
+bits = 64
+
+# Updates the environment with the option variables.
+opts.Update(env)
+
+# Process some arguments
+if env['use_llvm']:
+    env['CC'] = 'clang'
+    env['CXX'] = 'clang++'
+
+if env['p'] != '':
+    env['platform'] = env['p']
+
+if env['platform'] == '':
+    print("No valid target platform selected.")
+    quit();
+
+# Check our platform specifics
+if env['platform'] == "osx":
+    env['target_path'] += 'osx/'
+    cpp_library += '.osx'
+    if env['target'] in ('debug', 'd'):
+        env.Append(CCFLAGS = ['-g','-O2', '-arch', 'x86_64'])
+        env.Append(LINKFLAGS = ['-arch', 'x86_64'])
+    else:
+        env.Append(CCFLAGS = ['-g','-O3', '-arch', 'x86_64'])
+        env.Append(LINKFLAGS = ['-arch', 'x86_64'])
+
+elif env['platform'] in ('x11', 'linux'):
+    env['target_path'] += 'x11/'
+    cpp_library += '.linux'
+    if env['target'] in ('debug', 'd'):
+        env.Append(CXXFLAGS = ['-fPIC', '-g3','-O0', '-std=c++17', '-Wfatal-errors'])
+    else:
+        env.Append(CCFLAGS = ['-fPIC', '-g','-O3', '-std=c++17'])
+
+elif env['platform'] == "windows":
+    env['CXX'] = 'x86_64-w64-mingw32-g++'
+    env['CC'] = 'x86_64-w64-mingw32-gcc'
+    env.Append(CCFLAGS = ['-Os', '-std=c++17', '-g', '-Wfatal-errors'])
+    # TODO: These LINKFLAGS need to be added to all g++ linker platforms.
+    env.Append(LINKFLAGS=['-static', '-s'])
+    env['target_path'] += 'win64/'
+    cpp_library += '.windows'
+    env['SHLIBSUFFIX'] = '.dll'
+
+    # This makes sure to keep the session environment variables on windows,
+    # that way you can run scons in a vs 2017 prompt and it will find all the required tools
+    #env.Append(ENV = os.environ)
+    #env.Append(CCFLAGS = ['-DWIN32', '-D_WIN32', '-D_WINDOWS', '-W3', '-GR', '-D_CRT_SECURE_NO_WARNINGS'])
+    #if env['target'] in ('debug', 'd'):
+        #env.Append(CCFLAGS = ['-EHsc', '-D_DEBUG', '-MDd'])
+    #else:
+        #env.Append(CCFLAGS = ['-O2', '-EHsc', '-DNDEBUG', '-MD'])
+
+if env['target'] in ('debug', 'd'):
+    cpp_library += '.debug'
+else:
+    cpp_library += '.release'
+
+cpp_library += '.' + str(bits)
+
+# tweak this if you want to use different folders, or more folders, to store your source code in.
+env.Append(CPPPATH=['include'])
+
+# Build the standalone consoletest
+console_sources = [
+    'build/consoletest.cpp'
+]
+if env['use_llvm']: # TODO: Add a check for debug target.
+    env.Append(CCFLAGS=['-fsanitize=address'])
+    env.Append(LINKFLAGS=['-fsanitize=address'])
+env.Program(target='consoletest', source=console_sources)
+
+
+# Build the GDNative DLL.
+# make sure our binding library is properly includes
+env.Append(CPPPATH=[
+    godot_headers_path,
+    cpp_bindings_path + 'include/',
+    cpp_bindings_path + 'include/core/',
+    cpp_bindings_path + 'include/gen/'
+])
+env.Append(LIBPATH=[cpp_bindings_path + 'bin/'])
+
+env.Append(LIBS=[cpp_library])
+gdnative_sources = [
+    'build/init.cpp',
+]
+pottymodel_gdnative = env.SharedLibrary(target=env['target_path'] + env['target_name'] , source=gdnative_sources)
+Default(pottymodel_gdnative)
+
+# Generates help for the -h scons option.
+Help(opts.GenerateHelpText(env))
+
+

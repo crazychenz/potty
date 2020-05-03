@@ -2,6 +2,11 @@ extends Reference
 
 class_name Action
 
+var type : String
+
+func set_type(type_param : String):
+    type = type_param
+
 """
 Public entrypoint for initial Actions.
 """

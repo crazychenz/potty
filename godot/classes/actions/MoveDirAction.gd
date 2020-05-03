@@ -9,24 +9,7 @@ var direction
 
 func _init(dir: Vector2):
     direction = dir
-
-
-#static func right():
-#    var action = MoveDirAction.new(Vector2(1, 0))
-#    var soemthing = 1
-#    return action
-#
-#
-#static func left():
-#    return MoveDirAction.new(Vector2(-1, 0))
-#
-#
-#static func up():
-#    return MoveDirAction.new(Vector2(0, -1))
-#
-#
-#static func down():
-#    return MoveDirAction.new(Vector2(0, 1))
+    .set_type("MoveDirAction")
 
 
 func perform(actor) -> Transaction:
@@ -51,15 +34,29 @@ func _perform(actor, xaction) -> bool:
     var target = model.get_entity_at(new_pos)
     # If entity can move to location, return true
     if target == null:
-        xaction.add_command(MoveCommand.new(actor, new_pos, model))
+        xaction.add_command(MoveCommand.new(actor, new_pos, actor.get_grid_position(), model))
         return true
 
-    # If there is an object in the way, see if we can
-    # forward the same type of action onto it.
-    var action = MoveDirAction.new(direction)
+    # XXX: There needs to be a special action implied when player
+    #      runs into something. In RPG games it may be attack by default,
+    #      in Sokoban it would be to push or move the object. This
+    #      default collision action should be provided by the actor.
+    
+    #var action
+    #if target.default_move_action == null:
+    #    action = MoveDirAction.new(direction)
+    #else:
+    #    action = target.default_move_action.new()
+
+    action = actor. MoveDirAction.new(direction)
+
+    if not target.action_allowed(action, actor):
+        return false
+        
     var result = action._perform(target, xaction)
     if result == true:
-        xaction.add_command(MoveCommand.new(actor, new_pos, model))
+        xaction.add_command(MoveCommand.new(actor, new_pos, actor.get_grid_position(), model))
+    
     return result
 
 

@@ -1,6 +1,6 @@
 extends Node
 
-var MoveDirAction = g.import_action("MoveDirAction")
+#var MoveDirAction = g.import_action("MoveDirAction")
 
 var controller
 
@@ -56,47 +56,47 @@ mapped to the same controller actions.
 # Handle keyboard inputs
 func _on_keyboard_input(event: InputEvent) -> void:
     if Input.is_action_just_pressed("ui_right"):
-        controller.player_perform(MoveDirAction.new(Vector2(1, 0)))
+        controller.player_move(Vector2(1, 0));
     elif Input.is_action_just_pressed("ui_left"):
-        controller.player_perform(MoveDirAction.new(Vector2(-1, 0)))
+        controller.player_move(Vector2(-1, 0))
     elif Input.is_action_just_pressed("ui_up"):
-        controller.player_perform(MoveDirAction.new(Vector2(0, -1)))
+        controller.player_move(Vector2(0, -1))
     elif Input.is_action_just_pressed("ui_down"):
-        controller.player_perform(MoveDirAction.new(Vector2(0, 1)))
+        controller.player_move(Vector2(0, 1))
     #elif Input.is_action_just_pressed("ui_select"):
     #    controller.set_pulling(true)
     #elif Input.is_action_just_released("ui_select"):
     #    controller.set_pulling(false)
-
+    pass
 
 # Handle mouse inputs
 var mouse_down_pos : Vector2
 func _on_mouse_input(event: InputEvent) -> void:
-    if event is InputEventMouseButton:
-        if event.pressed == true:
-            mouse_down_pos = event.position
-            #print("Down at: %s" % mouse_down_pos)
-            return
-        else:
-            if mouse_down_pos == null:
-                return
-            if mouse_down_pos.distance_to(event.position) < 4:
-                # No single click actions supported at this time.
-                pass
-            else:
-                # We dragged something
-                var angle = rad2deg(mouse_down_pos.angle_to_point(event.position))
-                #print("Angle To: %s" % [angle])
-                controller.set_touch_origin(mouse_down_pos)
-                if angle > (180 - 15) and angle < (180 + 15):
-                    controller.player_perform(MoveDirAction.right())
-                elif angle > 15 and angle > (360 - 15):
-                    controller.player_perform(MoveDirAction.left())
-                elif angle > (90 - 15) and angle < (90 + 15):
-                    controller.player_perform(MoveDirAction.up())
-                elif angle > (270 - 15) and angle < (270 + 15):
-                    controller.player_perform(MoveDirAction.down())
-                    
+#    if event is InputEventMouseButton:
+#        if event.pressed == true:
+#            mouse_down_pos = event.position
+#            #print("Down at: %s" % mouse_down_pos)
+#            return
+#        else:
+#            if mouse_down_pos == null:
+#                return
+#            if mouse_down_pos.distance_to(event.position) < 4:
+#                # No single click actions supported at this time.
+#                pass
+#            else:
+#                # We dragged something
+#                var angle = rad2deg(mouse_down_pos.angle_to_point(event.position))
+#                #print("Angle To: %s" % [angle])
+#                controller.set_touch_origin(mouse_down_pos)
+#                if angle > (180 - 15) and angle < (180 + 15):
+#                    controller.player_perform(MoveDirAction.right())
+#                elif angle > 15 and angle > (360 - 15):
+#                    controller.player_perform(MoveDirAction.left())
+#                elif angle > (90 - 15) and angle < (90 + 15):
+#                    controller.player_perform(MoveDirAction.up())
+#                elif angle > (270 - 15) and angle < (270 + 15):
+#                    controller.player_perform(MoveDirAction.down())
+    pass                    
 
 #			# We only allow moving in a single axis at a time.
 #			if (grid_pos.x != mouse_down_grid_pos.x and grid_pos.y != mouse_down_grid_pos.y) or \

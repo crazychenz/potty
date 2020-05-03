@@ -28,6 +28,9 @@ func player_perform(action) -> void:
     if xaction != null:
         queue_xaction(xaction)
 
+func player_move(direction) -> void:
+    model.player_move(direction)
+
 
 func queue_xaction(xaction) -> void:
     # TODO: Do tweening here.
@@ -36,7 +39,8 @@ func queue_xaction(xaction) -> void:
 
 
 func _on_model_updated(xaction = null):
-    presentation.update(model.grid_as_string())
+    print("Got the updated signal") # TODO: uncomment next line
+    #presentation.update(model.grid_as_string())
 
 
 
