@@ -3,3 +3,8 @@
 engine
 releases
 .mono
+*.dll
+consoletest
+bin/
+build/
+emulator.log
