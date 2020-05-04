@@ -35,10 +35,11 @@ func ready():
 
 func controller_ready(controller_param):
     controller = controller_param
+    controller._on_model_updated()
     enable_all_processing()
 
 
 # Just a dummy function for testing refactor.
-signal updated_state_string(string)
-func update(state_string):
-    emit_signal("updated_state_string", state_string)
+signal updated_state_string(string, width, height)
+func update(state_string, width, height):
+    emit_signal("updated_state_string", state_string, width, height)

@@ -4,38 +4,13 @@ var controller
 var presentation
 
 func ready(presentation):
-    pass
+    self.presentation = presentation
+    presentation.connect("updated_state_string", self, "_on_updated_state_string")
 
 func controller_ready(controller):
     self.controller = controller
 
-    
 
-
-    # TODO: Setup local signals
-
-
-
-#
-#
-#
-#
-#
-#
-#
-#onready var model = get_parent()
-#
-#
-##func _fini():
-##	for child in get_children():
-##		remove_child(child)
-##		print("Leaked Freeing %s" % child)
-##		child.queue_free()
-##
-##func _notification(what):
-##	if what == NOTIFICATION_PREDELETE:
-##		_fini()
-#
 #func _ready():
 #	LevelState.connect("game_over", self, "_on_game_over")
 #	LevelState.connect("level_complete", self, "_on_level_complete")
@@ -63,63 +38,55 @@ func controller_ready(controller):
 #	get_parent().get_node("UIControl/GameOverPanel").set_visible(true)
 #
 #
-#func create_sprite_with_texture(texture) -> Sprite:
-#	var obj = Sprite.new()
-#	obj.texture = texture
-#	obj.set_scale(Vector2(0.5, 0.5))
-#	return obj
-#
-#
-#func add_position(x : int, y : int, obj_type : String) -> void:
-#	var obj
-#
-#	match obj_type:
-#		model.TYPE_EMPTY:
-#			obj = create_sprite_with_texture(load("res://assets/tiles/grass.png"))
-#		model.TYPE_NPC:
-#			obj = create_sprite_with_texture(load("res://assets/white.png"))
-#		model.TYPE_BRICKWALL:
-#			obj = create_sprite_with_texture(load("res://assets/tiles/brickredgray.png"))
-#		model.TYPE_DUCK:
-#			obj = create_sprite_with_texture(load("res://assets/animals/Duck.png"))
-#		model.TYPE_CHICKEN:
-#			obj = create_sprite_with_texture(load("res://assets/animals/Chicken.png"))
-#		model.TYPE_POTTY:
-#			obj = create_sprite_with_texture(load("res://assets/potty.png"))
-#		model.TYPE_BABY:
-#			obj = create_sprite_with_texture(load("res://assets/baby.png"))
-#		_:
-#			push_warning("Unknown object added to viewer.")
-#			# do nothing
-#			return
-#
-#	obj.set_position(Vector2((x * tile_dims.x), (y * tile_dims.y)) + board_offset)
-#	add_child(obj)
-#
-#
-#func update_view() -> void:
-#	# Wipe all the old stuff
-#	# TODO: Consider using a pool to limit allocations?
-#	for child in get_children():
-#		remove_child(child)
-#		child.queue_free()
-#
-#	# Display background
-#	#for x in range(model.GRID_COLS):
-#	#	for y in range(model.GRID_ROWS):
-#	#		add_position(x, y, model.TYPE_EMPTY)
-#
-#	# Display foreground
-#	for x in range(model.GRID_COLS):
-#		for y in range(model.GRID_ROWS):
-#			if not model.grid.is_empty(x, y):
-#				var obj = model.grid.get_position(x, y)
-#				if not is_instance_valid(obj):
-#					print("badness")
-#					obj = model.grid.get_position(x, y)
-#				add_position(x, y, obj.get_type())
-#
-#
-#
-#
-#
+func create_sprite_with_texture(texture) -> Sprite:
+    var obj = Sprite.new()
+    obj.texture = texture
+    obj.set_scale(Vector2(0.5, 0.5))
+    return obj
+
+const TYPE_EMPTY = '.'     #"Empty"
+const TYPE_NPC = '*'       #"Npc"
+const TYPE_GRASS = '.'     #"Grass"
+const TYPE_BRICKWALL = 'W' #"BrickWall"
+const TYPE_DUCK = 'R'      #"Duck"
+const TYPE_CHICKEN = 'C'   #"Chicken"
+const TYPE_POTTY = 'P'     #"Potty"
+const TYPE_BABY = 'T'      #"Baby"
+
+var typeTextureMap = {
+    TYPE_EMPTY: load("res://assets/tiles/grass.png"),
+    TYPE_NPC: load("res://assets/white.png"),
+    TYPE_GRASS: load("res://assets/tiles/grass.png"),
+    TYPE_BRICKWALL: load("res://assets/tiles/brickredgray.png"),
+    TYPE_DUCK: load("res://assets/animals/Duck.png"),
+    TYPE_CHICKEN: load("res://assets/animals/Chicken.png"),
+    TYPE_POTTY: load("res://assets/potty.png"),
+    TYPE_BABY: load("res://assets/baby.png"),
+}
+
+func add_position(x : int, y : int, obj_type : String) -> void:
+    var obj = create_sprite_with_texture(typeTextureMap[obj_type])
+    obj.set_name("x%dy%d" % [x, y])
+    obj.set_position(Vector2((x * presentation.tile_dims.x), (y * presentation.tile_dims.y)) + presentation.board_offset)
+    add_child(obj)
+
+
+func _on_updated_state_string(ascii_state, width, height) -> void:
+    # Wipe all the old stuff
+    # TODO: Consider using a pool to limit allocations?
+
+    for child in get_children():
+        remove_child(child)
+        child.queue_free()
+
+    # Display background
+    for y in range(height):
+       for x in range(width):
+           add_position(x, y, TYPE_EMPTY)
+
+    # Display foreground
+    for y in range(height):
+        for x in range(width):
+            var value = ascii_state[y * height + x]
+            if not value == '.':
+                add_position(x, y, value)

@@ -25,8 +25,8 @@
 
 class GridMoveAction : public IAction
 {
-    entt::entity entity;
     Vector2 direction;
+    entt::entity entity;
 
     // Populated by update()
     // This is shared to allow ActionResult to work.

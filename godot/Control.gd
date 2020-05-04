@@ -13,6 +13,7 @@ func ready(presentation_param, model_param):
     model = model_param
     
     model.connect("updated", self, "_on_model_updated")
+    model.connect("updated_precommit", self, "_on_model_updated_precommit")
 
 
 func _on_MainMenuButton_pressed() -> void:
@@ -23,39 +24,33 @@ func _on_PlayAgainButton_pressed() -> void:
     g.change_scene("res://Main.tscn")
 
 
-func player_perform(action) -> void:
-    var xaction = model.player_perform(action)
-    if xaction != null:
-        queue_xaction(xaction)
-
 func player_move(direction) -> void:
     model.player_move(direction)
 
 
-func queue_xaction(xaction) -> void:
-    # TODO: Do tweening here.
-    # Once tweening is complete enough, commit state.
-    model.commit_xaction(xaction)
+func grid_ascii_state(position) -> String:
+    return model.grid_ascii_state()
+    
+# TODO: Allow player to set pulling state
 
 
-func _on_model_updated(xaction = null):
-    print("Got the updated signal") # TODO: uncomment next line
-    #presentation.update(model.grid_as_string())
+func _on_model_updated():
+    #print("Got the updated signal") # TODO: uncomment next line
+    presentation.update(model.grid_ascii_state(), model.grid_width(), model.grid_height())
+
+
+func do_commit():
+    print("Doing commit")
+    model.do_commit()    
+    
+
+func _on_model_updated_precommit():
+    # TODO: Tell presentation to do tweens and then call do_commit()
+    print("got precommit update")
+    do_commit()
 
 
 
-
-
-
-
-
-
-
-
-
-#func set_pulling(pulling = true):
-#    self.pulling = pulling
-#
 #
 #func drag(down_position, up_position):
 #    var grid_pos = ((down_position - presentation.board_offset) / presentation.tile_dims)

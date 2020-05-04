@@ -19,7 +19,6 @@
 
 class GodotModelEngine : public CommonEngine
 {
-    XActionMap xactionMap;
     IPottyModel &adapter;
 
 public:
@@ -98,17 +97,40 @@ public:
 
     virtual void update(double delta)
     {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+
         // Run through all the registered processes (i.e. systems).
         scheduler.update(delta, (void *)&xactionMap);
 
         // All input viewers complete. Clear the user input vector.
         xactionMap[L"input"]->clear();
 
-        // TODO: After the scheduler runs, commit/defer the returned actions.
-        // TODO: Consider allowing for deferred transactions here.
-        bool updated = xactionMap[L"output"]->size() > 0 ? true : false;
-        commit_xaction(registry, *xactionMap[L"output"]);
-        if (updated) adapter.on_updated();
+        if (xactionMap[L"output"]->size() > 0)
+        {
+            // If there was actions to be done, send them to GUI 
+            // and wait for the do_commit() response to make it so.
+            // TODO: Put together the things to tween.
+            /*
+            std::vector<Vector2> srcpos;
+            XAction &xaction = *xactionMap[L"output"];
+            for (auto action = xaction.begin(); action != xaction.end(); action++) {
+                entt::entity entity = (*action)->get_entity();
+                auto &gpc = registry.get<GridPositionComponent>(entity);
+                srcpos.push_back(gpc.position);
+            }
+            */
+
+            adapter.on_updated_precommit(/*srcpos*/);
+            ctx.input_allowed = false;
+        }
+    }
+
+    virtual void do_commit()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        commit_xaction();
+        adapter.on_updated();
+        ctx.input_allowed = true;
     }
 
     virtual void player_move(Vector2 direction)
@@ -116,5 +138,40 @@ public:
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(ctx.player, direction));
         //std::wcout << "Player moved. " << direction.getX() << " " << direction.getY() << "\r\n";
+    }
+
+    virtual int grid_width() const
+    {
+        const auto &ctx = registry.ctx<ConsoleEngineContext>();
+        return ctx.grid->width;
+    }
+
+    virtual int grid_height() const
+    {
+        const auto &ctx = registry.ctx<ConsoleEngineContext>();
+        return ctx.grid->height;
+    }
+
+    virtual std::unique_ptr<std::wstring> grid_ascii_state()
+    {
+        const auto &ctx = registry.ctx<ConsoleEngineContext>();
+        const auto &grid = ctx.grid;
+        std::unique_ptr<std::wstring> ascii_state;
+        ascii_state = make_unique<std::wstring>(grid->width * grid->height, L'.');
+        for (int y = 0; y < grid->height; ++y)
+        {
+            for (int x = 0; x < grid->width; ++x)
+            {
+                entt::entity entity = grid->get_position(Vector2(x, y));
+                if (entity == grid->empty)
+                {
+                    ascii_state->replace(y * grid->height + x, 1, L".");
+                    continue;
+                }
+                auto &ascii = registry.get<AsciiComponent>(entity);
+                ascii_state->replace(y * grid->height + x, 1, &ascii.character);
+            }
+        }
+        return std::move(ascii_state);
     }
 };

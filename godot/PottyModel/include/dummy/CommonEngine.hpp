@@ -17,6 +17,7 @@ protected:
     entt::registry registry;
     const entt::registry &cregistry;
     entt::scheduler<double> scheduler;
+    XActionMap xactionMap;
 
     /*
     The general idea for actions is that they should be able to:
@@ -27,8 +28,11 @@ protected:
         ** Note: May be able to tie actions together to prevent misuse.
     */
 
-    void commit_xaction(entt::registry &registry, XAction &xaction)
+public:
+
+    void commit_xaction()
     {
+        XAction &xaction = *xactionMap[L"output"];
         // Process all the actions at once. (i.e. commit).
         for (auto action = xaction.begin(); action != xaction.end(); action++) {
             (*action)->perform(registry);
@@ -40,7 +44,7 @@ protected:
         xaction.clear(); // TODO: Consider storing into undo queue.
     }
 
-public:
+
 
     CommonEngine() : cregistry(registry) {}
     virtual ~CommonEngine() {}

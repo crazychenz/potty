@@ -16,9 +16,9 @@ The DomainModel may signal to the Controller.
 func _ready():
     # Deterministic startup procedure:
     
-    #$Presentation.ready()
-    #$ViewCanvas.ready($Presentation)
-    #$ViewWidgets.ready($Presentation)
+    $Presentation.ready()
+    $ViewCanvas.ready($Presentation)
+    $ViewWidgets.ready($Presentation)
     
     # Controller depends on DomainModel
     ##model.ready(LevelState.levels[LevelState.current_level]['layout'])
@@ -27,9 +27,9 @@ func _ready():
     
     # Controller initialization allows user interaction
     $Controller.ready($Presentation, $Model)
-    #$ViewWidgets.controller_ready($Controller)
-    #$ViewCanvas.controller_ready($Controller)
+    $ViewWidgets.controller_ready($Controller)
+    $ViewCanvas.controller_ready($Controller)
     $HIDInput.controller_ready($Controller)
-    #$Presentation.controller_ready($Controller)
+    $Presentation.controller_ready($Controller)
     ##model.emit_signal("updated")
     pass

@@ -23,11 +23,14 @@ func controller_ready(controller_param):
     PlayAgainButton.connect("pressed", controller, "_on_PlayAgainButton_pressed")
     ReturnButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
 
-    
 
-
-func _on_updated_state_string(string):
-    GridOutput.text = string
+func _on_updated_state_string(string, width, height):
+    var grid_text = ""
+    for y in range(0, height):
+        for x in range(0, width):
+            grid_text += string[y * height + x]
+        grid_text += "\n"
+    GridOutput.text = grid_text
 
 #func _ready() -> void:
 

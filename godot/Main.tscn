@@ -171,10 +171,10 @@ __meta__ = {
 }
 
 [node name="GridOutput" type="RichTextLabel" parent="ViewWidgets"]
-margin_left = 169.0
-margin_top = 189.0
-margin_right = 577.0
-margin_bottom = 500.0
+margin_left = 601.0
+margin_top = 370.0
+margin_right = 767.0
+margin_bottom = 578.0
 custom_fonts/mono_font = ExtResource( 9 )
 custom_fonts/normal_font = ExtResource( 9 )
 custom_colors/default_color = Color( 0, 0, 0, 1 )

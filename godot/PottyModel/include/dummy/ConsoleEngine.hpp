@@ -102,7 +102,6 @@ public:
 
     virtual void start()
     {
-        XActionMap xactionMap;
         struct timespec tstart={0,0}, tend={0,0};
         std::wcout << "Now waiting for user input.\r\n";
         while(running){
@@ -120,7 +119,7 @@ public:
 
             // TODO: After the scheduler runs, commit/defer the returned actions.
             // TODO: Consider allowing for deferred transactions here.
-            commit_xaction(registry, *xactionMap[L"output"]);
+            commit_xaction();
 
             clock_gettime(CLOCK_MONOTONIC, &tend);
 

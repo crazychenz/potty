@@ -7,7 +7,6 @@
 
 class AgeAction : public IAction
 {
-
     entt::entity entity;
     int health_delta;
     double oldLastUpdated;

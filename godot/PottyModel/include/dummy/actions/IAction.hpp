@@ -14,4 +14,5 @@ public:
     virtual ActionResult update(entt::registry &registry, double delta = 0, void *data = nullptr) {}
     virtual void perform(entt::registry &registry) {}
     virtual void unperform(entt::registry &registry) {}
+    /*virtual entt::entity get_entity() { return entity; }*/
 };

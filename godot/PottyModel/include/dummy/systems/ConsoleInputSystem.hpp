@@ -101,6 +101,10 @@ public:
     }
 
     void get_console_input(int *ret) {
+
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        if (ctx.input_allowed == false) { return; }
+
         /* BUG: If you press keys really quickly, this'll grab more than one. (Maybe just ignore it?) */
         ret[0] = read(STDIN_FILENO, &ret[1], 4);
         if (ret[0] < 0)
