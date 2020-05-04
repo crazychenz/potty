@@ -145,22 +145,22 @@ public:
         switch(input[1])
         {
             case 'w':
-                std::wcout << "up" << endl;
+                std::wcout << "up" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(0, -1);
                 ctx.player_move_pending = true;
                 break;
             case 'a':
-                std::wcout << "left" << endl;
+                std::wcout << "left" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(-1, 0);
                 ctx.player_move_pending = true;
                 break;
             case 's':
-                std::wcout << "down" << endl;
+                std::wcout << "down" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(0, 1);
                 ctx.player_move_pending = true;
                 break;
             case 'd':
-                std::wcout << "right" << endl;
+                std::wcout << "right" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(1, 0);
                 ctx.player_move_pending = true;
                 break;
@@ -168,9 +168,9 @@ public:
                 // Because console can't detect pressed/release state,
                 // this pulling option becomes a toggle.
                 ctx.player_controller_state.pulling = !ctx.player_controller_state.pulling;
-                std::wcout << "pulling = " << ctx.player_controller_state.pulling << "\r\n";
+                std::wcout << "pulling = " << ctx.player_controller_state.pulling << "\r\n"; ctx.redraw = true;
             default:
-                std::wcout << "Unmapped key pressed: " << std::hex << input[1] << endl;
+                std::wcout << "Unmapped key pressed: " << std::hex << input[1] << endl; ctx.redraw = true;
         }
     }
 

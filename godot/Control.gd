@@ -26,6 +26,7 @@ func _on_PlayAgainButton_pressed() -> void:
 
 func player_move(direction) -> void:
     model.player_move(direction)
+    pass
 
 
 func grid_ascii_state(position) -> String:
@@ -40,13 +41,28 @@ func _on_model_updated():
 
 
 func do_commit():
-    print("Doing commit")
+    #print("Doing commit")
     model.do_commit()    
     
 
-func _on_model_updated_precommit():
+func _on_model_updated_precommit(simple_moves : PoolVector2Array):
     # TODO: Tell presentation to do tweens and then call do_commit()
     print("got precommit update")
+    #print(simple_moves)
+    for i in range(0, len(simple_moves), 2):
+        print("Tween from %s -> %s" % [simple_moves[i], simple_moves[i+1]])
+    
+    # TODO: Setup tweens for each move.
+    # TODO: After all tweens complete, do commit().
+    
+    # BUG/NOTICE: We allow a keyboard/controller user
+    # to hold down a direction for subsequent moves. If
+    # there is no delay, it can move VERY fast. This needs
+    # to be slowed down when there is no tween or other
+    # timed blocker. For now .25s should do it.
+    # BUG: This could also be the result of not finding
+    # conflicts in the DLL appropriately.
+    yield(get_tree().create_timer(.1), "timeout")
     do_commit()
 
 

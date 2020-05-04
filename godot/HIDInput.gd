@@ -55,6 +55,9 @@ mapped to the same controller actions.
 """
 # Handle keyboard inputs
 func _on_keyboard_input(event: InputEvent) -> void:
+
+    # TODO: This could be done better.
+
     if Input.is_action_just_pressed("ui_right"):
         controller.player_move(Vector2(1, 0));
     elif Input.is_action_just_pressed("ui_left"):
@@ -63,6 +66,33 @@ func _on_keyboard_input(event: InputEvent) -> void:
         controller.player_move(Vector2(0, -1))
     elif Input.is_action_just_pressed("ui_down"):
         controller.player_move(Vector2(0, 1))
+        
+    elif Input.is_action_just_released("ui_right"):
+        controller.player_move(Vector2(0, 0));
+    elif Input.is_action_just_released("ui_left"):
+        controller.player_move(Vector2(0, 0))
+    elif Input.is_action_just_released("ui_up"):
+        controller.player_move(Vector2(0, 0))
+    elif Input.is_action_just_released("ui_down"):
+        controller.player_move(Vector2(0, 0))
+
+
+
+
+
+
+#    if Input.is_action_just_pressed("ui_right"):
+#        controller.player_move(Vector2(1, 0));
+#    elif Input.is_action_just_pressed("ui_left"):
+#        controller.player_move(Vector2(-1, 0))
+#    elif Input.is_action_just_pressed("ui_up"):
+#        controller.player_move(Vector2(0, -1))
+#    elif Input.is_action_just_pressed("ui_down"):
+#        controller.player_move(Vector2(0, 1))
+
+
+
+
     #elif Input.is_action_just_pressed("ui_select"):
     #    controller.set_pulling(true)
     #elif Input.is_action_just_released("ui_select"):

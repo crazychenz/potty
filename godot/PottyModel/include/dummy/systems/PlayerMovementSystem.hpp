@@ -41,13 +41,12 @@ public:
         if (ctx.player_controller_state.direction == Vector2(0, 0)) { return; }
         std::wcout << ctx.player_controller_state.direction << "\r\n"; ctx.redraw = true;
 
-        std::unique_ptr<ITransaction> xaction = estimate_xaction();
+        std::unique_ptr<Transaction> xaction = estimate_xaction();
         if (xaction == nullptr)
         {
             // TODO: Handle no memory?
         }
 
-        std::wcout << "ASDFSADF2\r\n";
         // Check validity of xaction.
         if (has_conflicts(xaction))
         {
@@ -66,10 +65,10 @@ public:
         }
     }
 
-    void bail_and_cleanup(std::unique_ptr<ITransaction> &xaction)
+    void bail_and_cleanup(std::unique_ptr<Transaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        if (xaction->is_player_xaction()) // TODO: Is this check nessessary?
+        if (xaction->player_xaction) // TODO: Is this check nessessary?
         {
             // We just processed a player_xaction, re-enable the player controls.
             std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
@@ -77,17 +76,14 @@ public:
         }
     }
 
-    bool has_conflicts(std::unique_ptr<ITransaction> &xaction)
+    bool has_conflicts(std::unique_ptr<Transaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         // check against new (should be none?)
-        std::wcout << "ASDFSADF\r\n";
-        for (auto &actitr1: xaction->get_list())
+        for (auto actitr1 = xaction->get_list().begin(); actitr1 != xaction->get_list().end(); ++actitr1)
         {
-            std::wcout << "pt1 " << actitr1->get_next() << "\r\n";
-            Vector2 pt1 = actitr1->get_next();
-            
+            auto pt1 = (*actitr1)->get_next();
 
             if (!ctx.grid->isPositionValid(pt1))
             {
@@ -110,11 +106,37 @@ public:
             }
         }
 
+        // check against pending (could be some?)
+        for (auto actitr1 = xaction->get_list().begin(); actitr1 != xaction->get_list().end(); ++actitr1)
+        {
+            auto pt1 = (*actitr1)->get_next();
+
+            if (!ctx.grid->isPositionValid(pt1))
+            {
+                std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
+                return true;
+            }
+
+            for (auto xactitr = ctx.pending_xaction_list.begin(); xactitr != ctx.pending_xaction_list.end(); ++xactitr)
+            {
+                for (auto actitr2 = (*xactitr)->get_list().begin(); actitr2 != (*xactitr)->get_list().end(); ++actitr2)
+                {
+                    auto pt2 = (*actitr2)->get_next();
+
+                    if (pt1 == pt2) {
+                        // ! No use case for this.
+                        std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
+                        return true;
+                    }
+                }
+            }
+        }
+
 
         return false;
     }
 
-    std::unique_ptr<ITransaction> estimate_xaction()
+    std::unique_ptr<Transaction> estimate_xaction()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
@@ -125,10 +147,9 @@ public:
 
         Vector2 direction(ctx.player_controller_state.direction);
 
-        std::unique_ptr<ITransaction> xaction = std::make_unique<Transaction>();
-        std::wcout << xaction->get_list().size() << "\r\n";
+        std::unique_ptr<Transaction> xaction = make_unique<Transaction>(timePassed);
 
-        xaction->set_player_xaction(true);
+        xaction->player_xaction = true;
         auto &grid = ctx.grid;
         const GridPositionComponent &gpc = registry.get<GridPositionComponent>(ctx.player);
         Vector2 position = Vector2(gpc.position);
@@ -152,16 +173,14 @@ public:
                     {
                         // Assuming if movable, also pullable.
                         // Note: The can_move code may look in the wrong direction for conditionals?
-                        xaction->push_back(std::make_shared<SingleMoveAction>(pulled_entity, pull_pos, position));
+                        xaction->push_back(make_shared<SingleMoveAction>(pulled_entity, pull_pos, position));
                     }
                 }
             }
         }
 
         while(true) {
-            xaction->push_back(std::make_shared<SingleMoveAction>(current, position, nextPosition));
-            auto &mylist = xaction->get_list();
-            const auto &myitr = xaction->get_list().begin();
+            xaction->push_back(make_shared<SingleMoveAction>(current, position, nextPosition));
 
             entt::entity target = grid->get_position(nextPosition);
 
@@ -197,7 +216,7 @@ public:
             current = target;
         }
 
-        return xaction;
+        return std::move(xaction);
 
     }
 };

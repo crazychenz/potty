@@ -9,7 +9,7 @@
 #include <dummy/types.hpp>
 #include <dummy/actions/common_actions.hpp>
 #include <dummy/components/common_components.hpp>
-#include <dummy/systems/MovementSystem.hpp>
+#include <dummy/systems/PlayerMovementSystem.hpp>
 #include <dummy/IConsoleEngine.hpp>
 #include <dummy/actions/IAction.hpp>
 #include <dummy/ConsoleEngineContext.hpp>
@@ -21,13 +21,18 @@ class GodotModelEngine : public CommonEngine
 {
     IPottyModel &adapter;
 
+    PlayerMovementSystem pms;
+
 public:
 
-    GodotModelEngine(IPottyModel &pottyModel) : adapter(pottyModel) {
+    GodotModelEngine(IPottyModel &pottyModel) : 
+            adapter(pottyModel),
+            pms(registry)
+    {
 
         // Create a transaction object to use for this frame.
-        xactionMap[L"output"] = std::make_unique<XAction>();
-        xactionMap[L"input"] = std::make_unique<XAction>();
+        //xactionMap[L"output"] = std::make_unique<XAction>();
+        //xactionMap[L"input"] = std::make_unique<XAction>();
 
         // The map.
         //auto gridEntity = registry.create();
@@ -41,7 +46,7 @@ public:
 
         // Flesh some entities.
         auto myHero = registry.create();
-        registry.emplace<PlayerComponent>(myHero);
+        registry.emplace<MovableComponent>(myHero);
         registry.emplace<HealthComponent>(myHero, 100);
         registry.emplace<NameComponent>(myHero, L"myHero");
         registry.emplace<AsciiComponent>(myHero, L'*');
@@ -54,35 +59,19 @@ public:
         registry.emplace<HealthComponent>(myRock, 100);
         registry.emplace<NameComponent>(myRock, L"myRock");
         registry.emplace<AsciiComponent>(myRock, L'R');
-        registry.emplace<MoveableComponent>(myRock);
+        registry.emplace<MovableComponent>(myRock);
         registry.emplace<GridPositionComponent>(myRock, Vector2(5, 4));
         ctx.grid->set_position(Vector2(5, 4), myRock);
-        //std::wcout << "myHero: " << (uint32_t)myRock << "\r\n";
+        std::wcout << "myRock: " << (uint32_t)myRock << "\r\n";
 
         auto myEnemy = registry.create();
         registry.emplace<HealthComponent>(myEnemy, 100);
         registry.emplace<NameComponent>(myEnemy, L"myEnemy");
         registry.emplace<AsciiComponent>(myEnemy, L'T');
-        registry.emplace<MoveableComponent>(myEnemy);
-        registry.emplace<BumpableComponent>(myEnemy, 
-            [](entt::registry &reg, /*entt::entity src,*/ entt::entity target, Vector2 direction) -> ActionResult {
-                
-                // This will allow moving.
-                return ActionResult(ActionResult::TryAgain, std::make_shared<GridMoveAction>(target, direction));
-
-                // This will allow consuming.
-                //std::wcout << "target " << (uint32_t)target << "\r\n";
-                //return ActionResult(std::make_shared<GridConsumeAction>(target));
-
-                // This will allow moving only by player.
-                //entt::entity source = get_source_entity(reg, target, direction);
-                //auto player = reg.try_get<PlayerComponent> (source);
-                //if (player == nullptr) return ActionResult(false);
-                //return ActionResult(ActionResult::TryAgain, std::make_shared<GridMoveAction>(target, direction));
-            });
+        registry.emplace<MovableComponent>(myEnemy);
         registry.emplace<GridPositionComponent>(myEnemy, Vector2(5, 5));
         ctx.grid->set_position(Vector2(5, 5), myEnemy);
-        //std::wcout << "myHero: " << (uint32_t)myEnemy << "\r\n";
+        std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
 
         // Create a scheduler to run through systems.
         // TODO: Consider using a dependency graph of systems and using topo_sort.hpp
@@ -92,7 +81,7 @@ public:
         //       captured input across frames.
         // Note: EnTT claims that the scheduler is unordered. That said, the actual
         //       implementation runs each of them in reverse order of attachment.
-        scheduler.attach<MovementSystem>(registry);
+        //scheduler.attach<MovementSystem>(registry);
     }
 
     virtual void update(double delta)
@@ -100,43 +89,95 @@ public:
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         // Run through all the registered processes (i.e. systems).
-        scheduler.update(delta, (void *)&xactionMap);
+        //scheduler.update(delta);
+        pms.update(delta);
 
-        // All input viewers complete. Clear the user input vector.
-        xactionMap[L"input"]->clear();
-
-        if (xactionMap[L"output"]->size() > 0)
+/*
+        if (ctx.new_xaction_list.size() > 0)
         {
-            // If there was actions to be done, send them to GUI 
-            // and wait for the do_commit() response to make it so.
-            // TODO: Put together the things to tween.
-            /*
-            std::vector<Vector2> srcpos;
-            XAction &xaction = *xactionMap[L"output"];
-            for (auto action = xaction.begin(); action != xaction.end(); action++) {
-                entt::entity entity = (*action)->get_entity();
-                auto &gpc = registry.get<GridPositionComponent>(entity);
-                srcpos.push_back(gpc.position);
-            }
-            */
+            // TODO: Generate list of simple moves from new_xaction list.
+            std::wcout << "HERE3\r\n";
 
-            adapter.on_updated_precommit(/*srcpos*/);
-            ctx.input_allowed = false;
+            std::unique_ptr<std::vector<Vector2>> simple_moves = std::make_unique<std::vector<Vector2>>();
+            for (std::list<std::unique_ptr<ITransaction>>::iterator xitr = ctx.new_xaction_list.begin(); xitr != ctx.new_xaction_list.end(); ++xitr)
+            {
+                std::unique_ptr<ITransaction> &xaction = *xitr;
+                std::vector<std::shared_ptr<IAction>>& action_list = xaction->get_list();
+                std::wcout << "action_list size " << action_list.size() << "\r\n";
+                for (auto itr = action_list.begin(); itr != action_list.end(); ++itr)
+                {
+                    //std::wcout << "move " << (*itr)->get_next() << "\r\n";
+                    simple_moves->push_back((*itr)->get_prev());
+                    simple_moves->push_back((*itr)->get_next());
+                }
+            }
+            std::wcout << "HERE4\r\n";
+        }
+*/
+
+        if (ctx.new_xaction_list.size() > 0)
+        {
+            // TODO: Generate list of simple moves from new_xaction list.
+            std::wcout << "HERE3\r\n";
+
+            std::unique_ptr<std::vector<Vector2>> simple_moves = std::make_unique<std::vector<Vector2>>();
+            for (auto xitr = ctx.new_xaction_list.begin(); xitr != ctx.new_xaction_list.end(); ++xitr)
+            {
+                for (auto itr = (*xitr)->get_list().begin(); itr != (*xitr)->get_list().end(); ++itr)
+                {
+                    //std::wcout << "move " << (*actitr)->get_next() << "\r\n";
+                    simple_moves->push_back((*itr)->get_prev());
+                    simple_moves->push_back((*itr)->get_next());
+                }
+            }
+            std::wcout << "HERE4\r\n";
+            adapter.on_updated_precommit(std::move(simple_moves));
+            std::wcout << "HERE5\r\n";
+        }
+
+        // Move new xactions to pending xactions.
+        while (ctx.new_xaction_list.size() > 0)
+        {
+            // Move new xactions to pending.
+            ctx.pending_xaction_list.push_back(std::move(ctx.new_xaction_list.front()));
+            ctx.new_xaction_list.pop_front();
         }
     }
 
     virtual void do_commit()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        commit_xaction();
+
+        // Note: This is where we wait for GUI completion notification
+        //       -- OR -- internal flush due to some NPC actor.
+
+        // Flush pending xactions.
+        // TODO: We should be able to flush a range from time to past.
+        for (auto itr = ctx.pending_xaction_list.begin(); itr != ctx.pending_xaction_list.end(); ++itr)
+        {
+            (*itr)->commit(registry);
+        }
+
+        // Now we move everything from pending to done.
+        // Note: This will become the Undo list.
+        while (ctx.pending_xaction_list.size() > 0)
+        {
+            // Move new xactions to pending.
+            ctx.done_xaction_list.push_back(std::move(ctx.pending_xaction_list.front()));
+            ctx.pending_xaction_list.pop_front();
+        }
+
+        // Everything *should* be OK, but we resend the board state updated anyway.
         adapter.on_updated();
-        ctx.input_allowed = true;
     }
 
+    // Note: Godot needs to set this to (0, 0) when nothing is pressed.
     virtual void player_move(Vector2 direction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(ctx.player, direction));
+        ctx.player_controller_state.direction = direction;
+        ctx.player_move_pending = true;
+        //xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(ctx.player, direction));
         //std::wcout << "Player moved. " << direction.getX() << " " << direction.getY() << "\r\n";
     }
 

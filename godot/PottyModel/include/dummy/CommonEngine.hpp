@@ -30,33 +30,6 @@ protected:
 
 public:
 
-    void commit_xaction(std::unique_ptr<Transaction> &xaction)
-    {
-        auto &ctx = registry.ctx<ConsoleEngineContext>();
-
-        // Process all the actions in this xaction.
-        std::reverse(xaction->get_list()->begin(), xaction->get_list()->end());
-        for (auto action = xaction->get_list()->begin(); action != xaction->get_list()->end(); action++) {
-            (*action)->perform(registry);
-        }
-        std::wcout << "Performed xaction\r\n";
-
-        // Reset the transaction.
-        // !BUG: This for loop is preventing a memory leak.
-        // !     Why are we leaking memory here?!
-        //std::for_each(xaction.begin(), xaction.end(), [](auto &action){ action.reset(); });
-        //xaction.clear(); // TODO: Consider storing into undo queue.
-
-        if (xaction->player_xaction)
-        {
-            // We just processed a player_xaction, re-enable the player controls.
-            std::wcout << "Re-enabled player controls.\r\n";
-            ctx.player_move_pending = false;
-        }
-    }
-
-
-
     CommonEngine() : cregistry(registry) {}
     virtual ~CommonEngine() {}
 

@@ -4,7 +4,7 @@
 
 #include <model/Grid.hpp>
 #include <dummy/PlayerControllerState.hpp>
-#include <dummy/Transaction.hpp>
+#include <dummy/ITransaction.hpp>
 
 class ConsoleEngineContext
 {
@@ -17,7 +17,7 @@ public:
     bool player_move_pending = false;
     bool redraw = false;
 
-    std::list<std::unique_ptr<Transaction>> new_xaction_list;
-    std::list<std::unique_ptr<Transaction>> pending_xaction_list;
-    std::list<std::unique_ptr<Transaction>> done_xaction_list;
+    std::list<std::unique_ptr<ITransaction>> new_xaction_list = {};
+    std::list<std::unique_ptr<ITransaction>> pending_xaction_list = {};
+    std::list<std::unique_ptr<ITransaction>> done_xaction_list = {};
 };

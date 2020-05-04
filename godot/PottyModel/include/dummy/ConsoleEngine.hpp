@@ -77,10 +77,10 @@ public:
         //       captured input across frames.
         // Note: EnTT claims that the scheduler is unordered. That said, the actual
         //       implementation runs each of them in reverse order of attachment.
-        scheduler.attach<ConsoleRenderSystem>(registry);
+        //scheduler.attach<ConsoleRenderSystem>(registry);
         //scheduler.attach<MyAgingSystem>(cregistry);
-        scheduler.attach<PlayerMovementSystem>(registry);
-        scheduler.attach<ConsoleInputSystem>(registry, *this);
+        //scheduler.attach<PlayerMovementSystem>(registry);
+        //scheduler.attach<ConsoleInputSystem>(registry, *this);
     }
 
     
@@ -90,6 +90,7 @@ public:
         ConsoleRenderSystem crs(registry);
         PlayerMovementSystem pms(registry);
         ConsoleInputSystem cis(registry, *this);
+
         struct timespec tstart={0,0}, tend={0,0};
         std::wcout << "Now waiting for user input.\r\n";
         auto &ctx = registry.ctx<ConsoleEngineContext>();
@@ -103,12 +104,29 @@ public:
             // Run through all the registered processes (i.e. systems).
             //scheduler.update(delta);
             cis.update(delta);
-            if (ctx.player_move_pending == true)
-            {
-                int j = 4;
-            }
             pms.update(delta);
             crs.update(delta);
+
+            if (ctx.new_xaction_list.size() > 0)
+            {
+                // TODO: Generate list of simple moves from new_xaction list.
+                std::wcout << "HERE3\r\n";
+
+                std::unique_ptr<std::vector<Vector2>> simple_moves = std::make_unique<std::vector<Vector2>>();
+                for (std::list<std::unique_ptr<ITransaction>>::iterator xitr = ctx.new_xaction_list.begin(); xitr != ctx.new_xaction_list.end(); ++xitr)
+                {
+                    std::unique_ptr<ITransaction> &xaction = *xitr;
+                    std::vector<std::shared_ptr<IAction>>& action_list = xaction->get_list();
+                    std::wcout << "action_list size " << action_list.size() << "\r\n";
+                    for (auto itr = action_list.begin(); itr != action_list.end(); ++itr)
+                    {
+                        //std::wcout << "move " << (*itr)->get_next() << "\r\n";
+                        simple_moves->push_back((*itr)->get_prev());
+                        simple_moves->push_back((*itr)->get_next());
+                    }
+                }
+                std::wcout << "HERE4\r\n";
+            }
 
             // Note: The direction state is reset each frame in console version.
             ctx.player_controller_state.direction = Vector2(0, 0);
@@ -129,7 +147,7 @@ public:
             // TODO: We should be able to flush a range from time to past.
             for (auto itr = ctx.pending_xaction_list.begin(); itr != ctx.pending_xaction_list.end(); ++itr)
             {
-                commit_xaction(*itr);
+                (*itr)->commit(registry);
             }
 
             // Now we move everything from pending to done.

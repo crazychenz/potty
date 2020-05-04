@@ -40,6 +40,7 @@ public:
     ~SingleMoveAction() {}
 
     Vector2 get_next() { return next_position; }
+    Vector2 get_prev() { return prev_position; }
 
     void perform(entt::registry &registry)
     {

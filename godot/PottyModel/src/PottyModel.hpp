@@ -20,7 +20,7 @@ public:
 
     /** `_init` must exist as it is called by Godot. */
     void _init() {
-        Godot::print("This is test from init");
+        //Godot::print("This is test from init");
     }
 
     void _process(float delta) {
@@ -41,11 +41,6 @@ public:
         return engine.grid_height();
     }
 
-    void commit_xaction()
-    {
-        return engine.commit_xaction();
-    }
-
     godot::String grid_ascii_state() {
         return godot::String(engine.grid_ascii_state()->c_str());
     }
@@ -59,24 +54,26 @@ public:
 
     void on_updated()
     {
+        //Godot::print("PottyModel.hpp: updated signal");
         emit_signal("updated");
     }
 
     // TODO: Add parameters to this.
-    void on_updated_precommit(/*Vector2 &dir, std::vector<Vector2> &srcpos*/)
+    void on_updated_precommit(std::unique_ptr<std::vector<Vector2>> simple_moves)
     {
-        /*
+        //Godot::print("PottyModel.hpp: updated_precommit signal");
         godot::PoolVector2Array sources;
-        for (auto itr = srcpos.begin(); itr != srcpos.end(); itr++)
+        for (auto itr = simple_moves->begin(); itr != simple_moves->end(); itr++)
         {
-            Vector2 &vec = *itr;
-            sources.push_back(godot::Vector2(vec.getX(), vec.getY()));
-        }*/
-        emit_signal("updated_precommit"/*, godot::Vector2(dir.getX(), dir.getY()), sources*/);
+            Vector2 &entry = *itr;
+            sources.push_back(godot::Vector2(entry.getX(), entry.getY()));
+        }
+        emit_signal("updated_precommit", sources);
     }
 
     void do_commit()
     {
+        //Godot::print("PottyModel.hpp: do_commit on engine");
         engine.do_commit();
     }
 
@@ -105,7 +102,7 @@ public:
         godot::register_signal<PottyModel>("updated");
 
         // TODO: Add parameters to this.
-        godot::register_signal<PottyModel>("updated_precommit"/*, "direction", GODOT_VARIANT_TYPE_VECTOR2, "sources", GODOT_VARIANT_TYPE_POOL_VECTOR2_ARRAY*/);
+        godot::register_signal<PottyModel>("updated_precommit", "sources", GODOT_VARIANT_TYPE_POOL_VECTOR2_ARRAY);
         //godot::emit_signal("updated");
         // register_signal<PottyModel>("signal_name", "string_argument", GODOT_VARIANT_TYPE_STRING)
         //register_signal<GDExample>((char *)"position_changed", "node", GODOT_VARIANT_TYPE_OBJECT, "new_pos", GODOT_VARIANT_TYPE_VECTOR2);
