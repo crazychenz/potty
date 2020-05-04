@@ -6,19 +6,19 @@
 
 #include <model/Vector2.hpp>
 
-class BumpableComponent {
+class MovableIfComponent {
 public:
     //                                               registry,        src,          dst,         tgt_position
-    BumpableComponent(std::function<ActionResult (entt::registry&, entt::entity, /*entt::entity,*/ Vector2)> lambda) : bump(lambda) {}
-    std::function<ActionResult (entt::registry&, entt::entity, /*entt::entity,*/ Vector2)> bump;
-
-    MOVABLE_IF
-    CONSUMABLE_IF
-
-
+    MovableIfComponent(std::function<
+        bool (
+            entt::registry&, /* registry */
+            entt::entity, /* this entity */
+            Vector2 /* delta to move */
+        )> lambda) : can_move(lambda) {}
+    std::function<ActionResult (entt::registry&, entt::entity, Vector2)> can_move;
 };
 
-
+#if 0
 [](entt::registry &reg, /*entt::entity src,*/ entt::entity target, Vector2 direction) -> ActionResult {
                 
                 // This will allow moving.
@@ -34,3 +34,4 @@ public:
                 //if (player == nullptr) return ActionResult(false);
                 //return ActionResult(ActionResult::TryAgain, std::make_shared<GridMoveAction>(target, direction));
             });
+#endif

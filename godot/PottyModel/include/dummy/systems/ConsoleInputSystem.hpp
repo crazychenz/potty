@@ -103,7 +103,6 @@ public:
     void get_console_input(int *ret) {
 
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        if (ctx.input_allowed == false) { return; }
 
         /* BUG: If you press keys really quickly, this'll grab more than one. (Maybe just ignore it?) */
         ret[0] = read(STDIN_FILENO, &ret[1], 4);
@@ -120,14 +119,13 @@ public:
         }
     }
 
-    void handle_special_input(const int *input, XActionMap &xactionMap)
+    void handle_special_input(const int *input)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         //entt::simple_view<HealthComponent, NameComponent>
-        auto view = registry.view<const PlayerComponent>();
-        auto entity = *view.begin();
+        //auto view = registry.view<const PlayerComponent>();
+        //auto entity = *view.begin();
 
-        
         switch(input[1])
         {
             case ConsoleInputSystem::KEY_ESCAPE:
@@ -138,40 +136,51 @@ public:
                 std::wcout << "TODO: Implement undo feature." << endl;
                 break;
             case 'n':
-                xactionMap[L"input"]->push_back(nullptr);
+                //xactionMap[L"input"]->push_back(nullptr);
                 break;
+        };
+
+        if (ctx.player_move_pending) { return; }
+
+        switch(input[1])
+        {
             case 'w':
-                //std::wcout << "up" << endl;
-                xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(entity, Vector2(0, -1)));
+                std::wcout << "up" << endl;
+                ctx.player_controller_state.direction = Vector2(0, -1);
+                ctx.player_move_pending = true;
                 break;
             case 'a':
-                //std::wcout << "left" << endl;
-                xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(entity, Vector2(-1, 0)));
+                std::wcout << "left" << endl;
+                ctx.player_controller_state.direction = Vector2(-1, 0);
+                ctx.player_move_pending = true;
                 break;
             case 's':
-                //std::wcout << "down" << endl;
-                xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(entity, Vector2(0, 1)));
+                std::wcout << "down" << endl;
+                ctx.player_controller_state.direction = Vector2(0, 1);
+                ctx.player_move_pending = true;
                 break;
             case 'd':
-                //std::wcout << "right" << endl;
-                xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(entity, Vector2(1, 0)));
+                std::wcout << "right" << endl;
+                ctx.player_controller_state.direction = Vector2(1, 0);
+                ctx.player_move_pending = true;
                 break;
             case 'p':
-                ctx.player_pulling = !ctx.player_pulling;
-                std::wcout << "pulling = " << ctx.player_pulling << "\r\n";
+                // Because console can't detect pressed/release state,
+                // this pulling option becomes a toggle.
+                ctx.player_controller_state.pulling = !ctx.player_controller_state.pulling;
+                std::wcout << "pulling = " << ctx.player_controller_state.pulling << "\r\n";
             default:
                 std::wcout << "Unmapped key pressed: " << std::hex << input[1] << endl;
         }
     }
 
-    void update(double delta, void *data)
+    void update(double delta)
     {
-        XActionMap *xactionMap = (XActionMap *)data;
         timePassed += delta;
         int input[2] = {};
         get_console_input(input);
         if (input[0] != 0)
-            handle_special_input(input, *xactionMap);
+            handle_special_input(input);
     }
 
 };

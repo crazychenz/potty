@@ -11,7 +11,7 @@
 // TODO: Replace console output with logger.
 class ConsoleRenderSystem : public entt::process<ConsoleRenderSystem, double>
 {
-    const entt::registry &registry;
+    entt::registry &registry;
     double timePassed = 0.0;
 
     void draw(const unique_ptr<Grid> &grid)
@@ -37,17 +37,18 @@ class ConsoleRenderSystem : public entt::process<ConsoleRenderSystem, double>
     }
 
 public:
-    ConsoleRenderSystem(const entt::registry &registry) : registry(registry) {}
+    ConsoleRenderSystem(entt::registry &registry) : registry(registry) {}
 
-    void update(double delta, void *data) {
+    void update(double delta) {
         timePassed += delta;
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         auto &grid = ctx.grid;
 
-        if (grid->dirty)
+        if (grid->dirty || ctx.redraw)
         {
             draw(grid);
             grid->dirty = false;
+            ctx.redraw = false;
         }
 
     }

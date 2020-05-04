@@ -31,6 +31,12 @@ public:
         return os;
     }
 
+    friend std::wostream& operator<<(std::wostream& os, const Vector2i& dt)
+    {
+        os << L"(" << std::to_wstring(dt.getX()) << L", " << std::to_wstring(dt.getY()) << L")";
+        return os;
+    }
+
     Vector2i& operator+=(const Vector2i& rhs)
     {
         _x += rhs.getX();
@@ -86,8 +92,8 @@ public:
         return L"(" + std::to_wstring(getX()) + L", " + std::to_wstring(getY()) + L")";
     }
 
-    int getX() const { return _x; }
-    int getY() const { return _y; }
+    float getX() const { return _x; }
+    float getY() const { return _y; }
 
     //const int &x;
     //const int &y;
@@ -95,6 +101,12 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Vector2f& dt)
     {
         os << "(" << dt.getX() << ", " << dt.getY() << ")";
+        return os;
+    }
+
+    friend std::wostream& operator<<(std::wostream& os, const Vector2f& dt)
+    {
+        os << L"(" << std::to_wstring(dt.getX()) << L", " << std::to_wstring(dt.getY()) << L")";
         return os;
     }
 

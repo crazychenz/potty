@@ -14,7 +14,7 @@
 #include <dummy/components/common_components.hpp>
 #include <dummy/systems/AgingSystem.hpp>
 #include <dummy/systems/ConsoleInputSystem.hpp>
-#include <dummy/systems/MovementSystem.hpp>
+#include <dummy/systems/PlayerMovementSystem.hpp>
 #include <dummy/systems/ConsoleRenderSystem.hpp>
 #include <dummy/IConsoleEngine.hpp>
 #include <dummy/actions/IAction.hpp>
@@ -42,7 +42,7 @@ public:
 
         // Flesh some entities.
         auto myHero = registry.create();
-        registry.emplace<PlayerComponent>(myHero);
+        registry.emplace<MovableComponent>(myHero);
         registry.emplace<HealthComponent>(myHero, 100);
         registry.emplace<NameComponent>(myHero, L"myHero");
         registry.emplace<AsciiComponent>(myHero, L'*');
@@ -55,35 +55,19 @@ public:
         registry.emplace<HealthComponent>(myRock, 100);
         registry.emplace<NameComponent>(myRock, L"myRock");
         registry.emplace<AsciiComponent>(myRock, L'R');
-        registry.emplace<MoveableComponent>(myRock);
+        registry.emplace<MovableComponent>(myRock);
         registry.emplace<GridPositionComponent>(myRock, Vector2(5, 4));
         ctx.grid->set_position(Vector2(5, 4), myRock);
-        std::wcout << "myHero: " << (uint32_t)myRock << "\r\n";
+        std::wcout << "myRock: " << (uint32_t)myRock << "\r\n";
 
         auto myEnemy = registry.create();
         registry.emplace<HealthComponent>(myEnemy, 100);
         registry.emplace<NameComponent>(myEnemy, L"myEnemy");
         registry.emplace<AsciiComponent>(myEnemy, L'T');
-        registry.emplace<MoveableComponent>(myEnemy);
-        registry.emplace<BumpableComponent>(myEnemy, 
-            [](entt::registry &reg, /*entt::entity src,*/ entt::entity target, Vector2 direction) -> ActionResult {
-                
-                // This will allow moving.
-                return ActionResult(ActionResult::TryAgain, std::make_shared<GridMoveAction>(target, direction));
-
-                // This will allow consuming.
-                //std::wcout << "target " << (uint32_t)target << "\r\n";
-                //return ActionResult(std::make_shared<GridConsumeAction>(target));
-
-                // This will allow moving only by player.
-                //entt::entity source = get_source_entity(reg, target, direction);
-                //auto player = reg.try_get<PlayerComponent> (source);
-                //if (player == nullptr) return ActionResult(false);
-                //return ActionResult(ActionResult::TryAgain, std::make_shared<GridMoveAction>(target, direction));
-            });
+        registry.emplace<MovableComponent>(myEnemy);
         registry.emplace<GridPositionComponent>(myEnemy, Vector2(5, 5));
         ctx.grid->set_position(Vector2(5, 5), myEnemy);
-        std::wcout << "myHero: " << (uint32_t)myEnemy << "\r\n";
+        std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
 
         // Create a scheduler to run through systems.
         // TODO: Consider using a dependency graph of systems and using topo_sort.hpp
@@ -93,33 +77,70 @@ public:
         //       captured input across frames.
         // Note: EnTT claims that the scheduler is unordered. That said, the actual
         //       implementation runs each of them in reverse order of attachment.
-        scheduler.attach<ConsoleRenderSystem>(cregistry);
-        scheduler.attach<MyAgingSystem>(cregistry);
-        scheduler.attach<MovementSystem>(registry);
+        scheduler.attach<ConsoleRenderSystem>(registry);
+        //scheduler.attach<MyAgingSystem>(cregistry);
+        scheduler.attach<PlayerMovementSystem>(registry);
         scheduler.attach<ConsoleInputSystem>(registry, *this);
-
     }
+
+    
 
     virtual void start()
     {
+        ConsoleRenderSystem crs(registry);
+        PlayerMovementSystem pms(registry);
+        ConsoleInputSystem cis(registry, *this);
         struct timespec tstart={0,0}, tend={0,0};
         std::wcout << "Now waiting for user input.\r\n";
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
         while(running){
             clock_gettime(CLOCK_MONOTONIC, &tstart);
 
             // Create a transaction object to use for this frame.
-            xactionMap[L"output"] = std::make_unique<XAction>();
-            xactionMap[L"input"] = std::make_unique<XAction>();
+            //xactionMap[L"output"] = std::make_unique<XAction>();
+            //xactionMap[L"input"] = std::make_unique<XAction>();
 
             // Run through all the registered processes (i.e. systems).
-            scheduler.update(delta, (void *)&xactionMap);
+            //scheduler.update(delta);
+            cis.update(delta);
+            if (ctx.player_move_pending == true)
+            {
+                int j = 4;
+            }
+            pms.update(delta);
+            crs.update(delta);
 
-            // All input viewers complete. Clear the user input vector.
-            xactionMap[L"input"]->clear();
+            // Note: The direction state is reset each frame in console version.
+            ctx.player_controller_state.direction = Vector2(0, 0);
 
-            // TODO: After the scheduler runs, commit/defer the returned actions.
-            // TODO: Consider allowing for deferred transactions here.
-            commit_xaction();
+            // Note: If we had a tween, we'd advertise any new transactions to tween here.
+
+            // Move new xactions to pending xactions.
+            while (ctx.new_xaction_list.size() > 0)
+            {
+                // Move new xactions to pending.
+                ctx.pending_xaction_list.push_back(std::move(ctx.new_xaction_list.front()));
+                ctx.new_xaction_list.pop_front();
+            }
+
+            // Note: This is where we wait for GUI completion notification or internal flush.
+
+            // Flush pending xactions.
+            // TODO: We should be able to flush a range from time to past.
+            for (auto itr = ctx.pending_xaction_list.begin(); itr != ctx.pending_xaction_list.end(); ++itr)
+            {
+                commit_xaction(*itr);
+            }
+
+            // Now we move everything from pending to done.
+            while (ctx.pending_xaction_list.size() > 0)
+            {
+                // Move new xactions to pending.
+                ctx.done_xaction_list.push_back(std::move(ctx.pending_xaction_list.front()));
+                ctx.pending_xaction_list.pop_front();
+            }
+
+            // Re-enable player input after transaction committed.
 
             clock_gettime(CLOCK_MONOTONIC, &tend);
 
