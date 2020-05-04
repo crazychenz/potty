@@ -4,6 +4,7 @@
 #include <memory>
 #include <utils/entt_wrap.hpp>
 #include <dummy/types.hpp>
+#include <dummy/Transaction.hpp>
 
 /*
     Note: implicit 'bump reactions' should be encoded into the design.
@@ -40,12 +41,13 @@ public:
         if (ctx.player_controller_state.direction == Vector2(0, 0)) { return; }
         std::wcout << ctx.player_controller_state.direction << "\r\n"; ctx.redraw = true;
 
-        std::unique_ptr<Transaction> xaction = estimate_xaction();
+        std::unique_ptr<ITransaction> xaction = estimate_xaction();
         if (xaction == nullptr)
         {
             // TODO: Handle no memory?
         }
 
+        std::wcout << "ASDFSADF2\r\n";
         // Check validity of xaction.
         if (has_conflicts(xaction))
         {
@@ -55,7 +57,7 @@ public:
             return;
         }
 
-        if (xaction->get_list()->size() > 0)
+        if (xaction->get_list().size() > 0)
         {
             ctx.new_xaction_list.push_back(std::move(xaction));
             return;
@@ -64,10 +66,10 @@ public:
         }
     }
 
-    void bail_and_cleanup(std::unique_ptr<Transaction> &xaction)
+    void bail_and_cleanup(std::unique_ptr<ITransaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        if (xaction->player_xaction) // TODO: Is this check nessessary?
+        if (xaction->is_player_xaction()) // TODO: Is this check nessessary?
         {
             // We just processed a player_xaction, re-enable the player controls.
             std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
@@ -75,14 +77,17 @@ public:
         }
     }
 
-    bool has_conflicts(std::unique_ptr<Transaction> &xaction)
+    bool has_conflicts(std::unique_ptr<ITransaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         // check against new (should be none?)
-        for (auto actitr1 = xaction->get_list()->begin(); actitr1 != xaction->get_list()->end(); ++actitr1)
+        std::wcout << "ASDFSADF\r\n";
+        for (auto &actitr1: xaction->get_list())
         {
-            auto pt1 = (*actitr1)->get_next();
+            std::wcout << "pt1 " << actitr1->get_next() << "\r\n";
+            Vector2 pt1 = actitr1->get_next();
+            
 
             if (!ctx.grid->isPositionValid(pt1))
             {
@@ -92,7 +97,7 @@ public:
 
             for (auto xactitr = ctx.new_xaction_list.begin(); xactitr != ctx.new_xaction_list.end(); ++xactitr)
             {
-                for (auto actitr2 = (*xactitr)->get_list()->begin(); actitr2 != (*xactitr)->get_list()->end(); ++actitr2)
+                for (auto actitr2 = (*xactitr)->get_list().begin(); actitr2 != (*xactitr)->get_list().end(); ++actitr2)
                 {
                     auto pt2 = (*actitr2)->get_next();
 
@@ -109,7 +114,7 @@ public:
         return false;
     }
 
-    std::unique_ptr<Transaction> estimate_xaction()
+    std::unique_ptr<ITransaction> estimate_xaction()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
@@ -120,9 +125,10 @@ public:
 
         Vector2 direction(ctx.player_controller_state.direction);
 
-        std::unique_ptr<Transaction> xaction = make_unique<Transaction>(timePassed);
+        std::unique_ptr<ITransaction> xaction = std::make_unique<Transaction>();
+        std::wcout << xaction->get_list().size() << "\r\n";
 
-        xaction->player_xaction = true;
+        xaction->set_player_xaction(true);
         auto &grid = ctx.grid;
         const GridPositionComponent &gpc = registry.get<GridPositionComponent>(ctx.player);
         Vector2 position = Vector2(gpc.position);
@@ -146,14 +152,16 @@ public:
                     {
                         // Assuming if movable, also pullable.
                         // Note: The can_move code may look in the wrong direction for conditionals?
-                        xaction->push_back(make_shared<SingleMoveAction>(pulled_entity, pull_pos, position));
+                        xaction->push_back(std::make_shared<SingleMoveAction>(pulled_entity, pull_pos, position));
                     }
                 }
             }
         }
 
         while(true) {
-            xaction->push_back(make_shared<SingleMoveAction>(current, position, nextPosition));
+            xaction->push_back(std::make_shared<SingleMoveAction>(current, position, nextPosition));
+            auto &mylist = xaction->get_list();
+            const auto &myitr = xaction->get_list().begin();
 
             entt::entity target = grid->get_position(nextPosition);
 
@@ -165,7 +173,8 @@ public:
 
             if (target == grid->empty)
             {
-                std::wcout << "Nothing else to move.\r\n";  ctx.redraw = true;
+                std::wcout << "Nothing else to move.\r\n";
+                ctx.redraw = true;
                 break;
             }
 
@@ -188,55 +197,8 @@ public:
             current = target;
         }
 
-        return std::move(xaction);
+        return xaction;
 
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-while (true)
-{
-    ActionResult result = action->actout(registry);
-    // TODO: Need to cleanup this ignored action.
-    if (result.succeeded != true)
-    {
-        //std::wcout << "result.succeeded != true\r\n";
-        // We may have gone down a sequence of actions that led us
-        // to a dead end (e.g. moving a block that is against a wall).
-        // In this case, we just ignore that we ever saw the action.
-        // Note: This ignored action needs to be cleaned up by the
-        //       caller.
-        return;
-    }
-    if (result.alternate == nullptr)
-    {
-        // If we're here, we know we haven't failed and there was
-        // no alternate action to account for.
-        //std::wcout << "result.alternate == null\r\n";
-        break;
-    }
-
-    // The action resulted in an alternate action. Therefore we
-    // process this alternate action on the next iteration.
-    action = result.alternate;
-}
-#endif
