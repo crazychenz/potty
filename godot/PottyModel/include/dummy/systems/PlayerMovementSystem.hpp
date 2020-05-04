@@ -39,7 +39,7 @@ public:
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         if (ctx.player_controller_state.direction == Vector2(0, 0)) { return; }
-        std::wcout << ctx.player_controller_state.direction << "\r\n"; ctx.redraw = true;
+        //std::wcout << ctx.player_controller_state.direction << "\r\n"; ctx.redraw = true;
 
         std::unique_ptr<Transaction> xaction = estimate_xaction();
         if (xaction == nullptr)
@@ -71,7 +71,7 @@ public:
         if (xaction->player_xaction) // TODO: Is this check nessessary?
         {
             // We just processed a player_xaction, re-enable the player controls.
-            std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
+            //std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
             ctx.player_move_pending = false;
         }
     }
@@ -87,7 +87,7 @@ public:
 
             if (!ctx.grid->isPositionValid(pt1))
             {
-                std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
+                //std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
                 return true;
             }
 
@@ -99,7 +99,7 @@ public:
 
                     if (pt1 == pt2) {
                         // ! No use case for this.
-                        std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
+                        //std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
                         return true;
                     }
                 }
@@ -113,7 +113,7 @@ public:
 
             if (!ctx.grid->isPositionValid(pt1))
             {
-                std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
+                //std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
                 return true;
             }
 
@@ -125,7 +125,7 @@ public:
 
                     if (pt1 == pt2) {
                         // ! No use case for this.
-                        std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
+                        //std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
                         return true;
                     }
                 }
@@ -186,13 +186,13 @@ public:
 
             if (!grid->isPositionValid(nextPosition))
             {
-                std::wcout << "Position invalid.\r\n";  ctx.redraw = true;
+                //std::wcout << "Position invalid.\r\n";  ctx.redraw = true;
                 break;
             }
 
             if (target == grid->empty)
             {
-                std::wcout << "Nothing else to move.\r\n";
+                //std::wcout << "Nothing else to move.\r\n";
                 ctx.redraw = true;
                 break;
             }
@@ -200,13 +200,13 @@ public:
             auto movable = registry.try_get<MovableComponent>(target);
             if (movable == nullptr)
             {
-                std::wcout << "No movable component found.\r\n";  ctx.redraw = true;
+                //std::wcout << "No movable component found.\r\n";  ctx.redraw = true;
                 break;
             }
 
             if (!movable->can_move(registry, target, direction))
             {
-                std::wcout << "Movable component refuses to move.\r\n";  ctx.redraw = true;
+                //std::wcout << "Movable component refuses to move.\r\n";  ctx.redraw = true;
                 break;
             }
 

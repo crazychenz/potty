@@ -17,7 +17,7 @@ public:
     bool player_xaction = false;
 
     Transaction(double ctime = 0) : ctime(ctime), action_list() {
-        std::wcout << "Building transaction\r\n";
+        //std::wcout << "Building transaction\r\n";
     }
 
     virtual ~Transaction() { action_list.clear(); }
@@ -40,12 +40,12 @@ public:
         for (auto action = action_list.begin(); action != action_list.end(); action++) {
             (*action)->perform(registry);
         }
-        std::wcout << "Committed xaction\r\n"; ctx.redraw = true;
+        //std::wcout << "Committed xaction\r\n"; ctx.redraw = true;
 
         if (player_xaction)
         {
             // We just processed a player_xaction, re-enable the player controls.
-            std::wcout << "Re-enabled player controls.\r\n";
+            //std::wcout << "Re-enabled player controls.\r\n";
             ctx.player_move_pending = false; ctx.redraw = true;
         }
     }

@@ -38,6 +38,9 @@ func controller_ready(controller_param):
     controller._on_model_updated()
     enable_all_processing()
 
+signal updated_precommit(simple_moves)
+func updated_precommit(simple_moves):
+    emit_signal("updated_precommit", simple_moves)
 
 # Just a dummy function for testing refactor.
 signal updated_state_string(string, width, height)

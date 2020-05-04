@@ -92,6 +92,8 @@ public:
         //scheduler.update(delta);
         pms.update(delta);
 
+        ctx.player_controller_state.direction = Vector2(0, 0);
+
 /*
         if (ctx.new_xaction_list.size() > 0)
         {
@@ -117,9 +119,7 @@ public:
 
         if (ctx.new_xaction_list.size() > 0)
         {
-            // TODO: Generate list of simple moves from new_xaction list.
-            std::wcout << "HERE3\r\n";
-
+            // Generate list of simple moves from new_xaction list.
             std::unique_ptr<std::vector<Vector2>> simple_moves = std::make_unique<std::vector<Vector2>>();
             for (auto xitr = ctx.new_xaction_list.begin(); xitr != ctx.new_xaction_list.end(); ++xitr)
             {
@@ -130,9 +130,7 @@ public:
                     simple_moves->push_back((*itr)->get_next());
                 }
             }
-            std::wcout << "HERE4\r\n";
             adapter.on_updated_precommit(std::move(simple_moves));
-            std::wcout << "HERE5\r\n";
         }
 
         // Move new xactions to pending xactions.
