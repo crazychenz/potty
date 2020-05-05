@@ -14,7 +14,10 @@ func ready(presentation_param, model_param):
     
     model.connect("updated", self, "_on_model_updated")
     model.connect("updated_precommit", self, "_on_model_updated_precommit")
+    model.connect("goal_reached", self, "_on_goal_reached")
 
+func _on_goal_reached() -> void:
+    presentation.goal_reached()
 
 func _on_MainMenuButton_pressed() -> void:
     g.change_scene("res://Title.tscn")

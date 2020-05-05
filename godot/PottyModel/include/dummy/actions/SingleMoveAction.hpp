@@ -46,6 +46,7 @@ public:
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         auto &grid = ctx.grid;
 
+        std::wcout << "Moving " << prev_position << " -> " << next_position << "\r\n"; ctx.redraw = true;
         grid->set_position(prev_position, grid->empty);
         grid->set_position(next_position, entity);
         registry.get<GridPositionComponent>(entity).position = next_position;

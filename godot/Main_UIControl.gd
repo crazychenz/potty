@@ -15,7 +15,10 @@ onready var GridOutput = find_node("GridOutput")
 func ready(presentation_param):
     presentation = presentation_param
     presentation.connect("updated_state_string", self, "_on_updated_state_string")
+    presentation.connect("goal_reached", self, "_on_goal_reached")
 
+func _on_goal_reached():
+    $GameOverPanel.set_visible(true)
 
 func controller_ready(controller_param):
     controller = controller_param
@@ -24,6 +27,7 @@ func controller_ready(controller_param):
     ReturnButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
     
     controller.model.connect("meta_update", self, "_on_meta_update")
+    
 
 func _on_meta_update(info):
     $MetaInfo.text = info

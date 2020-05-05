@@ -13,7 +13,10 @@ public:
 
     std::unique_ptr<Grid> grid;
     entt::entity player;
-    //bool player_pulling = false;
+    entt::entity potty;
+    entt::entity toddler;
+    
+    bool goal_reached = false;
 
     PlayerControllerState player_controller_state;
     int player_move_state = PLAYER_MOVE_WAITING_STATE;

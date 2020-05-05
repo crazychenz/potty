@@ -5,6 +5,7 @@
 #include <utils/entt_wrap.hpp>
 #include <dummy/types.hpp>
 #include <dummy/Transaction.hpp>
+#include <dummy/components/common_components.hpp>
 
 /*
     Note: implicit 'bump reactions' should be encoded into the design.
@@ -40,7 +41,7 @@ public:
 
         if (ctx.player_move_state != PLAYER_MOVE_PROCESSING_STATE) return;
 
-        std::unique_ptr<Transaction> xaction = estimate_xaction();
+        std::unique_ptr<ITransaction> xaction = estimate_xaction();
         if (xaction == nullptr)
         {
             // TODO: Handle no memory?
@@ -51,6 +52,7 @@ public:
         {
             // TODO: Try to resolve things.
             // For now, we're going to just forget it.
+            std::wcout << "Detected conflicts with transaction.\r\n"; ctx.redraw = true;
             bail_and_cleanup(xaction);
             return;
         }
@@ -67,10 +69,10 @@ public:
         }
     }
 
-    void bail_and_cleanup(std::unique_ptr<Transaction> &xaction)
+    void bail_and_cleanup(std::unique_ptr<ITransaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        if (xaction->player_xaction) // TODO: Is this check nessessary?
+        if (xaction->is_player_xaction()) // TODO: Is this check nessessary?
         {
             // We just processed a player_xaction, re-enable the player controls.
             //std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
@@ -80,7 +82,7 @@ public:
     }
 
     bool _conflicts_with_pending_xactions(
-            std::unique_ptr<Transaction> &xaction,
+            std::unique_ptr<ITransaction> &xaction,
             std::list<std::unique_ptr<ITransaction>> &xaction_list)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
@@ -93,7 +95,8 @@ public:
 
             // Only allow moves to valid positions.
             // ! No use case for this until we have AI.
-            if (!ctx.grid->isPositionValid(pt1)) { return true; }
+            // TODO: Do this more intelligently.
+            if (!ctx.grid->isPositionValid(pt1) && pt1 != Vector2(-1000000, -1000000)) { return true; }
             //std::wcout << pt1 << " isValid " << ctx.grid->isPositionValid(pt1) << "\r\n";
 
             for (auto xaction_itr = xaction_list.begin(); xaction_itr != xaction_list.end(); ++xaction_itr)
@@ -103,7 +106,10 @@ public:
                 {
                     auto pt2 = (*other_act_itr)->get_next();
                     //std::wcout << "Comparing " << pt1 << " and " << pt2 << "\r\n";
-                    if (pt1 == pt2) { return true; }
+                    if (pt1 == pt2) {
+                        std::wcout << "Conflict: " << pt1 << " and " << pt2 << "\r\n"; ctx.redraw = true;
+                        return true;
+                    }
                 }
             }
         }
@@ -111,14 +117,16 @@ public:
         return false;
     }
 
-    bool has_conflicts(std::unique_ptr<Transaction> &xaction)
+    bool has_conflicts(std::unique_ptr<ITransaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         // Only allow (last) moves to empty spaces.
         auto itr = xaction->get_list().end();
         Vector2 dest = (*(--itr))->get_next();
-        if (ctx.grid->get_position(dest) != ctx.grid->empty) { return true; }
+        if (ctx.grid->isPositionValid(dest) && ctx.grid->get_position(dest) != ctx.grid->empty) {
+            return true;
+        }
         //std::wcout << "Dest " << dest << " Entity " << (uint32_t)ctx.grid->get_position(dest) << " Empty " << (uint32_t)ctx.grid->empty << "\r\n";
 
         if (_conflicts_with_pending_xactions(xaction, ctx.new_xaction_list) ||
@@ -130,13 +138,13 @@ public:
         return false;
     }
 
-    std::unique_ptr<Transaction> estimate_xaction()
+    std::unique_ptr<ITransaction> estimate_xaction()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         Vector2 direction(ctx.player_controller_state.direction);
-        std::unique_ptr<Transaction> xaction = make_unique<Transaction>(timePassed);
+        std::unique_ptr<ITransaction> xaction = make_unique<Transaction>(timePassed);
 
-        xaction->player_xaction = true;
+        xaction->set_player_xaction(true);
         auto &grid = ctx.grid;
         const GridPositionComponent &gpc = registry.get<GridPositionComponent>(ctx.player);
         Vector2 position = Vector2(gpc.position);
@@ -156,7 +164,7 @@ public:
                     // TODO: We need a pullable and pushable component, but for
                     // TODO: now we'll limp along with this noise.
                     PullableComponent *pullable = registry.try_get<PullableComponent>(pulled_entity);
-                    if (pullable != nullptr && pullable->can_pull(registry, current, direction))
+                    if (pullable != nullptr && pullable->can_pull(registry, pulled_entity, current, direction, xaction))
                     {
                         // Assuming if movable, also pullable.
                         // Note: The can_move code may look in the wrong direction for conditionals?
@@ -173,31 +181,60 @@ public:
 
             if (!grid->isPositionValid(nextPosition))
             {
-                //std::wcout << "Position invalid.\r\n";  ctx.redraw = true;
+                // Position invalid.
                 break;
             }
 
             if (target == grid->empty)
             {
-                //std::wcout << "Nothing else to move.\r\n";
+                // Nothing else to move.
                 ctx.redraw = true;
                 break;
             }
 
-            PushableComponent *pushable = registry.try_get<PushableComponent>(target);
-            if (pushable == nullptr)
-            {
-                //std::wcout << "No movable component found.\r\n";  ctx.redraw = true;
-                break;
+            {   // Bumping takes precedence.
+                BumpableComponent *bumpable = registry.try_get<BumpableComponent>(target);
+                if (bumpable != nullptr)
+                {
+                    if (!bumpable->bump(registry, target, current, direction, xaction))
+                    {
+                        // Bump refuses to move or get out of the way.
+                        break;
+                    }
+                    goto next;
+                }
             }
 
-            if (!pushable->can_push(registry, target, direction))
-            {
-                //std::wcout << "Movable component refuses to move.\r\n";  ctx.redraw = true;
-                break;
+            {   // If bumpable not available, fallback to pushable.
+                PushableComponent *pushable = registry.try_get<PushableComponent>(target);
+                if (pushable != nullptr)
+                {
+                    if (!pushable->can_push(registry, target, current, direction, xaction))
+                    {
+                        // Pushable refuses to move.
+                        break;
+                    }
+                    goto next;
+                }
             }
 
-            // Advance to the next space.
+            
+            {   // If pushable not available, fallback to consumable.
+                ConsumableComponent *consumable = registry.try_get<ConsumableComponent>(target);
+                if (consumable != nullptr)
+                {
+                    if (!consumable->can_consume(registry, target, current, xaction))
+                    {
+                        // Consumable refuses to consume.
+                        break;
+                    }
+                    // TODO: consume() could return a boolean to determine if we continue or break.
+                    consumable->consume(registry, target, current, xaction);
+                    break;
+                }
+            }
+
+            next: // Advance to the next space.
             position = nextPosition;
             nextPosition = position + direction;
             current = target;

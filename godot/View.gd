@@ -29,11 +29,12 @@ func controller_ready(controller):
 #	LevelState.game_over()
 #
 #
+
 #func _on_game_over():
 #	set_visible(false)
 #	get_parent().get_node("UIControl/GameOverPanel").set_visible(true)
-#
-#
+
+
 #func _on_level_complete():
 #	set_visible(false)
 #	get_parent().get_node("UIControl/GameOverPanel").set_visible(true)

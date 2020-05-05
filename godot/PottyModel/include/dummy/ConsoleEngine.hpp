@@ -73,6 +73,7 @@ public:
         std::wcout << "myRock: " << (uint32_t)myRock << "\r\n";
 
         auto myEnemy = registry.create();
+        ctx.toddler = myEnemy;
         registry.emplace<HealthComponent>(myEnemy, 100);
         registry.emplace<NameComponent>(myEnemy, L"myEnemy");
         registry.emplace<AsciiComponent>(myEnemy, L'T');
@@ -83,12 +84,25 @@ public:
         std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
 
         auto myPotty = registry.create();
+        ctx.potty = myPotty;
         registry.emplace<NameComponent>(myPotty, L"myPotty");
         registry.emplace<AsciiComponent>(myPotty, L'P');
-        registry.emplace<PushableComponent>(myPotty, [](entt::registry &reg, entt::entity target, Vector2 direction) -> bool {
-            return false;
+        //registry.emplace<PushableComponent>(myPotty, [](auto &reg, auto target, auto direction, auto &xaction) -> bool {
+        //    return false;
+        //});
+        //registry.emplace<PullableComponent>(myPotty);
+        registry.emplace<ConsumableComponent>(myPotty, 
+        [](auto &registry, auto consumed, auto consumer, auto &xaction) -> bool {
+            return true;
+        },
+        [](auto &registry, auto consumed, auto consumer, auto &xaction) -> void {
+            auto &ctx = registry.template ctx<ConsoleEngineContext>();
+            if (consumed == ctx.potty && consumer == ctx.toddler)
+            {
+                auto &gpc = registry.template get<GridPositionComponent>(consumed);
+                xaction->push_back(std::make_shared<SinglePottyAction>(consumed, gpc.position));
+            }
         });
-        registry.emplace<PullableComponent>(myPotty);
         registry.emplace<GridPositionComponent>(myPotty, Vector2(7, 7));
         ctx.grid->set_position(Vector2(7, 7), myPotty);
         std::wcout << "myPotty: " << (uint32_t)myPotty << "\r\n";
@@ -158,6 +172,11 @@ public:
 
         // Run through all the registered processes (i.e. systems).
         //scheduler.update(delta);
+        if (ctx.goal_reached)
+        {
+            adapter.goal_reached();
+        }
+
         #ifdef CONSOLE_BUILD
         cis.update(delta);
         #endif

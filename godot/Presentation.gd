@@ -32,6 +32,9 @@ func _ready():
 func ready():
     pass
 
+signal goal_reached
+func goal_reached():
+    emit_signal("goal_reached")
 
 func controller_ready(controller_param):
     controller = controller_param

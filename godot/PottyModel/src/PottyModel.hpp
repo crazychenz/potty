@@ -52,6 +52,11 @@ public:
         return ret;
     }
 
+    virtual void goal_reached()
+    {
+        emit_signal("goal_reached");
+    }
+
     void on_updated()
     {
         //Godot::print("PottyModel.hpp: updated signal");
@@ -111,6 +116,8 @@ public:
 
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("updated");
+
+        godot::register_signal<PottyModel>("goal_reached");
 
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("meta_update", "meta", GODOT_VARIANT_TYPE_STRING);

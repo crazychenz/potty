@@ -6,6 +6,8 @@ public:
     IPottyModel() { }
     virtual ~IPottyModel() {}
 
+    virtual void goal_reached() {}
+
     virtual void on_updated() {}
     
     // TODO: Add parameters to this.

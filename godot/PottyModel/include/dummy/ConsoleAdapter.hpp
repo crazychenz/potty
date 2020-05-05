@@ -6,6 +6,8 @@ public:
     ConsoleAdapter() { }
     virtual ~ConsoleAdapter() {}
 
+    virtual void goal_reached() {}
+
     virtual void on_updated() {}
     
     // TODO: Add parameters to this.
