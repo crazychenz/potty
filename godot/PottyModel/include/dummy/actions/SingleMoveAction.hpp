@@ -18,7 +18,6 @@
 #include <dummy/ConsoleEngineContext.hpp>
 #include <model/Vector2.hpp>
 #include "IAction.hpp"
-#include "ActionResult.hpp"
 
 // TODO: Replace this with logger.
 #include <iostream>

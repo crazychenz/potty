@@ -185,6 +185,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="MetaInfo" type="Label" parent="ViewWidgets"]
+margin_left = 597.0
+margin_top = 256.0
+margin_right = 736.0
+margin_bottom = 331.0
+text = "asfsdafdsf"
+
 [node name="Notes" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0

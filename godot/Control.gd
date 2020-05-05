@@ -29,6 +29,10 @@ func player_move(direction) -> void:
     pass
 
 
+func player_pull(value) -> void:
+    model.player_pull(value)
+
+
 func grid_ascii_state(position) -> String:
     return model.grid_ascii_state()
     

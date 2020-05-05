@@ -4,7 +4,7 @@
 #include <PoolArrays.hpp>
 #include <String.hpp>
 #include <model/Vector2.hpp>
-#include <dummy/GodotModelEngine.hpp>
+#include <dummy/ConsoleEngine.hpp>
 #include <dummy/IPottyModel.hpp>
 
 using godot::Godot;
@@ -12,7 +12,7 @@ using godot::Godot;
 class PottyModel : public IPottyModel, public godot::Node {
     GODOT_CLASS(PottyModel, godot::Node);
 
-    GodotModelEngine engine;
+    ConsoleEngine engine;
     double time_passed = 0;
 
 public:

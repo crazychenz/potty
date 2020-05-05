@@ -22,6 +22,11 @@ func controller_ready(controller_param):
     MainMenuButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
     PlayAgainButton.connect("pressed", controller, "_on_PlayAgainButton_pressed")
     ReturnButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
+    
+    controller.model.connect("meta_update", self, "_on_meta_update")
+
+func _on_meta_update(info):
+    $MetaInfo.text = info
 
 
 func _on_updated_state_string(string, width, height):

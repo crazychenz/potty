@@ -78,7 +78,6 @@ public:
         registry.emplace<NameComponent>(myPotty, L"myPotty");
         registry.emplace<AsciiComponent>(myPotty, L'P');
         registry.emplace<MovableComponent>(myPotty, [](entt::registry &reg, entt::entity target, Vector2 direction) -> bool {
-
             return false;
         });
         registry.emplace<GridPositionComponent>(myPotty, Vector2(7, 7));

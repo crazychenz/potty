@@ -91,6 +91,13 @@ cpp_library += '.' + str(bits)
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=['include'])
 
+libjson_sources = [
+    'build/lib_json/json_reader.cpp',
+    'build/lib_json/json_value.cpp',
+    'build/lib_json/json_writer.cpp',
+]
+libjson = env.StaticLibrary(target="libjson", source=libjson_sources)
+
 # Build the standalone consoletest
 console_sources = [
     'build/consoletest.cpp'

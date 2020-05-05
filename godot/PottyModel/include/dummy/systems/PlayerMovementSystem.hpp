@@ -127,74 +127,13 @@ public:
             return true;
         }
 
-#if 0
-        // check against new (should be none?)
-        for (auto actitr1 = xaction->get_list().begin(); actitr1 != xaction->get_list().end(); ++actitr1)
-        {
-            auto pt1 = (*actitr1)->get_next();
-
-            if (!ctx.grid->isPositionValid(pt1))
-            {
-                //std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
-                return true;
-            }
-
-            for (auto xactitr = ctx.new_xaction_list.begin(); xactitr != ctx.new_xaction_list.end(); ++xactitr)
-            {
-                for (auto actitr2 = (*xactitr)->get_list().begin(); actitr2 != (*xactitr)->get_list().end(); ++actitr2)
-                {
-                    auto pt2 = (*actitr2)->get_next();
-
-                    if (pt1 == pt2) {
-                        // ! No use case for this.
-                        //std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
-                        return true;
-                    }
-                }
-            }
-        }
-
-        // check against pending (could be some?)
-        for (auto actitr1 = xaction->get_list().begin(); actitr1 != xaction->get_list().end(); ++actitr1)
-        {
-            auto pt1 = (*actitr1)->get_next();
-
-            if (!ctx.grid->isPositionValid(pt1))
-            {
-                //std::wcout << "Moving to invalid poaition " << pt1 << "\r\n";  ctx.redraw = true;
-                return true;
-            }
-
-            for (auto xactitr = ctx.pending_xaction_list.begin(); xactitr != ctx.pending_xaction_list.end(); ++xactitr)
-            {
-                for (auto actitr2 = (*xactitr)->get_list().begin(); actitr2 != (*xactitr)->get_list().end(); ++actitr2)
-                {
-                    auto pt2 = (*actitr2)->get_next();
-
-                    if (pt1 == pt2) {
-                        // ! No use case for this.
-                        //std::wcout << "Two points going for same position.\r\n";  ctx.redraw = true;
-                        return true;
-                    }
-                }
-            }
-        }
-#endif
-
         return false;
     }
 
     std::unique_ptr<Transaction> estimate_xaction()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-
-        // Skip this until the last player move was complete.
-        // Note: If we implement UNDO, the player just has to wait until
-        //       their last command is complete.
-        //if (ctx.player_move_pending) { return; }
-
         Vector2 direction(ctx.player_controller_state.direction);
-
         std::unique_ptr<Transaction> xaction = make_unique<Transaction>(timePassed);
 
         xaction->player_xaction = true;

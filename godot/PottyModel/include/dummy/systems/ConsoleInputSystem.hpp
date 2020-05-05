@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
-#include <sys/select.h>
+//#include <sys/select.h>
 
 #include <termios.h>
 #include <string.h>
@@ -140,29 +140,29 @@ public:
                 break;
         };
 
-        if (ctx.player_move_pending || ctx.player_action_pending) { return; }
+        if (ctx.player_move_state != PLAYER_MOVE_WAITING_STATE) { return; }
 
         switch(input[1])
         {
             case 'w':
                 std::wcout << "up" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(0, -1);
-                ctx.player_move_pending = true;
+                ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE;
                 break;
             case 'a':
                 std::wcout << "left" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(-1, 0);
-                ctx.player_move_pending = true;
+                ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE;
                 break;
             case 's':
                 std::wcout << "down" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(0, 1);
-                ctx.player_move_pending = true;
+                ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE;
                 break;
             case 'd':
                 std::wcout << "right" << endl; ctx.redraw = true;
                 ctx.player_controller_state.direction = Vector2(1, 0);
-                ctx.player_move_pending = true;
+                ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE;
                 break;
             case 'p':
                 // Because console can't detect pressed/release state,

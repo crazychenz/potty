@@ -93,10 +93,10 @@ func _on_keyboard_input(event: InputEvent) -> void:
 
 
 
-    #elif Input.is_action_just_pressed("ui_select"):
-    #    controller.set_pulling(true)
-    #elif Input.is_action_just_released("ui_select"):
-    #    controller.set_pulling(false)
+    elif Input.is_action_just_pressed("ui_select"):
+        controller.player_pull(true)
+    elif Input.is_action_just_released("ui_select"):
+        controller.player_pull(false)
     pass
 
 # Handle mouse inputs
