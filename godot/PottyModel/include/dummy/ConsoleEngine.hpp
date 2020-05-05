@@ -52,7 +52,8 @@ public:
 
         // Flesh some entities.
         auto myHero = registry.create();
-        registry.emplace<MovableComponent>(myHero);
+        registry.emplace<PushableComponent>(myHero);
+        registry.emplace<PullableComponent>(myHero);
         registry.emplace<HealthComponent>(myHero, 100);
         registry.emplace<NameComponent>(myHero, L"myHero");
         registry.emplace<AsciiComponent>(myHero, L'*');
@@ -65,7 +66,8 @@ public:
         registry.emplace<HealthComponent>(myRock, 100);
         registry.emplace<NameComponent>(myRock, L"myRock");
         registry.emplace<AsciiComponent>(myRock, L'R');
-        registry.emplace<MovableComponent>(myRock);
+        registry.emplace<PushableComponent>(myRock);
+        registry.emplace<PullableComponent>(myRock);
         registry.emplace<GridPositionComponent>(myRock, Vector2(5, 4));
         ctx.grid->set_position(Vector2(5, 4), myRock);
         std::wcout << "myRock: " << (uint32_t)myRock << "\r\n";
@@ -74,7 +76,8 @@ public:
         registry.emplace<HealthComponent>(myEnemy, 100);
         registry.emplace<NameComponent>(myEnemy, L"myEnemy");
         registry.emplace<AsciiComponent>(myEnemy, L'T');
-        registry.emplace<MovableComponent>(myEnemy);
+        registry.emplace<PushableComponent>(myEnemy);
+        registry.emplace<PullableComponent>(myEnemy);
         registry.emplace<GridPositionComponent>(myEnemy, Vector2(5, 5));
         ctx.grid->set_position(Vector2(5, 5), myEnemy);
         std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
@@ -82,9 +85,10 @@ public:
         auto myPotty = registry.create();
         registry.emplace<NameComponent>(myPotty, L"myPotty");
         registry.emplace<AsciiComponent>(myPotty, L'P');
-        registry.emplace<MovableComponent>(myPotty, [](entt::registry &reg, entt::entity target, Vector2 direction) -> bool {
+        registry.emplace<PushableComponent>(myPotty, [](entt::registry &reg, entt::entity target, Vector2 direction) -> bool {
             return false;
         });
+        registry.emplace<PullableComponent>(myPotty);
         registry.emplace<GridPositionComponent>(myPotty, Vector2(7, 7));
         ctx.grid->set_position(Vector2(7, 7), myPotty);
         std::wcout << "myPotty: " << (uint32_t)myPotty << "\r\n";

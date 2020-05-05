@@ -155,8 +155,8 @@ public:
                 {
                     // TODO: We need a pullable and pushable component, but for
                     // TODO: now we'll limp along with this noise.
-                    auto movable = registry.try_get<MovableComponent>(pulled_entity);
-                    if (movable != nullptr && movable->can_move(registry, current, direction))
+                    PullableComponent *pullable = registry.try_get<PullableComponent>(pulled_entity);
+                    if (pullable != nullptr && pullable->can_pull(registry, current, direction))
                     {
                         // Assuming if movable, also pullable.
                         // Note: The can_move code may look in the wrong direction for conditionals?
@@ -184,14 +184,14 @@ public:
                 break;
             }
 
-            auto movable = registry.try_get<MovableComponent>(target);
-            if (movable == nullptr)
+            PushableComponent *pushable = registry.try_get<PushableComponent>(target);
+            if (pushable == nullptr)
             {
                 //std::wcout << "No movable component found.\r\n";  ctx.redraw = true;
                 break;
             }
 
-            if (!movable->can_move(registry, target, direction))
+            if (!pushable->can_push(registry, target, direction))
             {
                 //std::wcout << "Movable component refuses to move.\r\n";  ctx.redraw = true;
                 break;
