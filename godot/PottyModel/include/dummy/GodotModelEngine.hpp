@@ -20,7 +20,8 @@
 class GodotModelEngine : public CommonEngine
 {
     IPottyModel &adapter;
-
+    double timePassed = 0.0;
+    double metaTimeout = 0.2;
     PlayerMovementSystem pms;
 
 public:
@@ -73,6 +74,17 @@ public:
         ctx.grid->set_position(Vector2(5, 5), myEnemy);
         std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
 
+        auto myPotty = registry.create();
+        registry.emplace<NameComponent>(myPotty, L"myPotty");
+        registry.emplace<AsciiComponent>(myPotty, L'P');
+        registry.emplace<MovableComponent>(myPotty, [](entt::registry &reg, entt::entity target, Vector2 direction) -> bool {
+
+            return false;
+        });
+        registry.emplace<GridPositionComponent>(myPotty, Vector2(7, 7));
+        ctx.grid->set_position(Vector2(7, 7), myPotty);
+        std::wcout << "myPotty: " << (uint32_t)myPotty << "\r\n";
+
         // Create a scheduler to run through systems.
         // TODO: Consider using a dependency graph of systems and using topo_sort.hpp
         // TODO: to ensure they execute in the correct order.
@@ -86,7 +98,23 @@ public:
 
     virtual void update(double delta)
     {
+        timePassed += delta;
         auto &ctx = registry.ctx<ConsoleEngineContext>();
+
+        metaTimeout -= delta;
+        if (metaTimeout < 0.0)
+        {
+            // Send meta update
+            std::string meta = 
+                "timePassed: " + std::to_string(timePassed) + "\n" +
+                "delta: " + std::to_string(delta) + "\n" +
+                "ctx.player_move_state = " + std::to_string(ctx.player_move_state) + "\n" +
+                "ctx.new_xaction_list.size = " + std::to_string(ctx.new_xaction_list.size()) + "\n" +
+                "ctx.pending_xaction_list.size = " + std::to_string(ctx.new_xaction_list.size()) + "\n" +
+                "ctx.done_xaction_list.size = " + std::to_string(ctx.done_xaction_list.size()) + "\n";
+            adapter.meta_update(meta);
+            metaTimeout = 0.001;
+        }
 
         // Run through all the registered processes (i.e. systems).
         //scheduler.update(delta);
@@ -146,6 +174,10 @@ public:
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
+        if (ctx.player_move_state != PLAYER_MOVE_PENDING_STATE) return;
+        //std::wcout << "ctx.player_move_state = PLAYER_MOVE_COMMIT_STATE\r\n";
+        ctx.player_move_state = PLAYER_MOVE_COMMIT_STATE;
+
         // Note: This is where we wait for GUI completion notification
         //       -- OR -- internal flush due to some NPC actor.
 
@@ -167,16 +199,31 @@ public:
 
         // Everything *should* be OK, but we resend the board state updated anyway.
         adapter.on_updated();
+
+        //std::wcout << "ctx.player_move_state = PLAYER_MOVE_WAITING_STATE\r\n";
+        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
     }
 
     // Note: Godot needs to set this to (0, 0) when nothing is pressed.
     virtual void player_move(Vector2 direction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
+        if (ctx.player_move_state != PLAYER_MOVE_WAITING_STATE) return;
+
         ctx.player_controller_state.direction = direction;
-        ctx.player_move_pending = true;
-        //xactionMap[L"input"]->push_back(std::make_shared<GridMoveAction>(ctx.player, direction));
-        //std::wcout << "Player moved. " << direction.getX() << " " << direction.getY() << "\r\n";
+        if (direction != Vector2(0, 0))
+        {
+            //std::wcout << "ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE " << direction << "\r\n";
+            ctx.player_move_state = PLAYER_MOVE_PROCESSING_STATE;
+        }
+    }
+
+    virtual void player_pull(bool value)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        if (ctx.player_move_state != PLAYER_MOVE_WAITING_STATE) return;
+
+        ctx.player_controller_state.pulling = value;
     }
 
     virtual int grid_width() const

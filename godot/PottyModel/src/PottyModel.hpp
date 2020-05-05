@@ -58,6 +58,11 @@ public:
         emit_signal("updated");
     }
 
+    void meta_update(std::string &meta)
+    {
+        emit_signal("meta_update", godot::String(meta.c_str()));
+    }
+
     // TODO: Add parameters to this.
     void on_updated_precommit(std::unique_ptr<std::vector<Vector2>> simple_moves)
     {
@@ -77,6 +82,11 @@ public:
         engine.do_commit();
     }
 
+    void player_pull(bool value)
+    {
+        engine.player_pull(value);
+    }
+
     static void _register_methods() {
         godot::register_method("_process", &PottyModel::_process);
         godot::register_method("player_move", &PottyModel::player_move);
@@ -84,6 +94,7 @@ public:
         godot::register_method("grid_height", &PottyModel::grid_height);
         godot::register_method("grid_ascii_state", &PottyModel::grid_ascii_state);
         godot::register_method("do_commit", &PottyModel::do_commit);
+        godot::register_method("player_pull", &PottyModel::player_pull);
 
 
 
@@ -100,6 +111,9 @@ public:
 
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("updated");
+
+        /** Registering a signal: **/
+        godot::register_signal<PottyModel>("meta_update", "meta", GODOT_VARIANT_TYPE_STRING);
 
         // TODO: Add parameters to this.
         godot::register_signal<PottyModel>("updated_precommit", "sources", GODOT_VARIANT_TYPE_POOL_VECTOR2_ARRAY);

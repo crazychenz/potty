@@ -38,8 +38,7 @@ public:
 
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
-        if (ctx.player_controller_state.direction == Vector2(0, 0)) { return; }
-        //std::wcout << ctx.player_controller_state.direction << "\r\n"; ctx.redraw = true;
+        if (ctx.player_move_state != PLAYER_MOVE_PROCESSING_STATE) return;
 
         std::unique_ptr<Transaction> xaction = estimate_xaction();
         if (xaction == nullptr)
@@ -59,6 +58,9 @@ public:
         if (xaction->get_list().size() > 0)
         {
             ctx.new_xaction_list.push_back(std::move(xaction));
+            //std::wcout << "ctx.player_move_state = PLAYER_MOVE_PENDING_STATE\r\n";
+            ctx.player_move_state = PLAYER_MOVE_PENDING_STATE;
+            
             return;
             // TODO: Do this here or in main engine loop?
             //ctx.player_controller_state.direction = Vector2(0, 0);
@@ -72,14 +74,60 @@ public:
         {
             // We just processed a player_xaction, re-enable the player controls.
             //std::wcout << "Re-enabled player controls.\r\n"; ctx.redraw = true;
-            ctx.player_move_pending = false;
+            //std::wcout << "ctx.player_move_state = PLAYER_MOVE_WAITING_STATE\r\n";
+            ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
         }
+    }
+
+    bool _conflicts_with_pending_xactions(
+            std::unique_ptr<Transaction> &xaction,
+            std::list<std::unique_ptr<ITransaction>> &xaction_list)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+
+        // Reject if any xaction destination is already a destination of a pending xaction.
+        // TODO: Check positions that are occupied (but may move soon.)
+        for (auto action_itr = xaction->get_list().begin(); action_itr != xaction->get_list().end(); ++action_itr)
+        {
+            auto pt1 = (*action_itr)->get_next();
+
+            // Only allow moves to valid positions.
+            // ! No use case for this until we have AI.
+            if (!ctx.grid->isPositionValid(pt1)) { return true; }
+            //std::wcout << pt1 << " isValid " << ctx.grid->isPositionValid(pt1) << "\r\n";
+
+            for (auto xaction_itr = xaction_list.begin(); xaction_itr != xaction_list.end(); ++xaction_itr)
+            {
+                for (auto other_act_itr = (*xaction_itr)->get_list().begin(); other_act_itr != (*xaction_itr)->get_list().end(); ++other_act_itr)
+                //for (auto other_act_itr: (*xaction_itr)->get_list())
+                {
+                    auto pt2 = (*other_act_itr)->get_next();
+                    //std::wcout << "Comparing " << pt1 << " and " << pt2 << "\r\n";
+                    if (pt1 == pt2) { return true; }
+                }
+            }
+        }
+
+        return false;
     }
 
     bool has_conflicts(std::unique_ptr<Transaction> &xaction)
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
+        // Only allow (last) moves to empty spaces.
+        auto itr = xaction->get_list().end();
+        Vector2 dest = (*(--itr))->get_next();
+        if (ctx.grid->get_position(dest) != ctx.grid->empty) { return true; }
+        //std::wcout << "Dest " << dest << " Entity " << (uint32_t)ctx.grid->get_position(dest) << " Empty " << (uint32_t)ctx.grid->empty << "\r\n";
+
+        if (_conflicts_with_pending_xactions(xaction, ctx.new_xaction_list) ||
+            _conflicts_with_pending_xactions(xaction, ctx.pending_xaction_list))
+        {
+            return true;
+        }
+
+#if 0
         // check against new (should be none?)
         for (auto actitr1 = xaction->get_list().begin(); actitr1 != xaction->get_list().end(); ++actitr1)
         {
@@ -131,7 +179,7 @@ public:
                 }
             }
         }
-
+#endif
 
         return false;
     }

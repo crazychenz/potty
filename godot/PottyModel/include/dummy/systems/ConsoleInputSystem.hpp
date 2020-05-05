@@ -140,7 +140,7 @@ public:
                 break;
         };
 
-        if (ctx.player_move_pending) { return; }
+        if (ctx.player_move_pending || ctx.player_action_pending) { return; }
 
         switch(input[1])
         {

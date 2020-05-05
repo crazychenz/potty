@@ -46,7 +46,7 @@ public:
         {
             // We just processed a player_xaction, re-enable the player controls.
             //std::wcout << "Re-enabled player controls.\r\n";
-            ctx.player_move_pending = false; ctx.redraw = true;
+            ctx.redraw = true;
         }
     }
 
