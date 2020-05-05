@@ -77,6 +77,13 @@ func _on_keyboard_input(event: InputEvent) -> void:
         controller.player_move(Vector2(0, 0))
 
 
+    # Some debug keys.
+    # TODO: Lock these to a activation state.
+    elif Input.is_action_pressed('ui_timescale_down'):
+        controller.timescale_down()
+    elif Input.is_action_pressed('ui_timescale_up'):
+        controller.timescale_up()
+        
 
 
 

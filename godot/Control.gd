@@ -23,6 +23,18 @@ func _on_MainMenuButton_pressed() -> void:
     g.change_scene("res://Title.tscn")
 
 
+func timescale_down():
+    Engine.time_scale /= 2
+    print("Timescale down: %s" % Engine.time_scale)
+    presentation.timescale_change()
+    
+
+func timescale_up():
+    Engine.time_scale *= 2
+    print("Timescale up: %s" % Engine.time_scale)
+    presentation.timescale_change()
+    
+
 func _on_PlayAgainButton_pressed() -> void:
     g.change_scene("res://Main.tscn")
 

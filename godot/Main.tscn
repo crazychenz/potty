@@ -192,6 +192,10 @@ margin_right = 736.0
 margin_bottom = 331.0
 text = "asfsdafdsf"
 
+[node name="Timescale" type="Label" parent="ViewWidgets"]
+margin_right = 40.0
+margin_bottom = 14.0
+
 [node name="Notes" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0

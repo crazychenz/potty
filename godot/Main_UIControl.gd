@@ -16,6 +16,12 @@ func ready(presentation_param):
     presentation = presentation_param
     presentation.connect("updated_state_string", self, "_on_updated_state_string")
     presentation.connect("goal_reached", self, "_on_goal_reached")
+    presentation.connect("timescale_change", self, "_on_timescale_change")
+
+
+func _on_timescale_change():
+    $Timescale.text = "Time Scale: %s" % Engine.time_scale
+
 
 func _on_goal_reached():
     $GameOverPanel.set_visible(true)
