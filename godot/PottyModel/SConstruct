@@ -105,6 +105,7 @@ console_sources = [
 if env['use_llvm']: # TODO: Add a check for debug target.
     env.Append(CCFLAGS=['-fsanitize=address'])
     env.Append(LINKFLAGS=['-fsanitize=address'])
+env.Append(LIBS=[libjson])
 env.Program(target='consoletest', source=console_sources)
 
 

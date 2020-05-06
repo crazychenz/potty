@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+
 #include <utils/entt_wrap.hpp>
 
 #include <dummy/types.hpp>
@@ -21,10 +22,12 @@
 #include <dummy/IConsoleEngine.hpp>
 #include <dummy/actions/IAction.hpp>
 #include <dummy/ConsoleEngineContext.hpp>
-#include <dummy/CommonEngine.hpp>
 #include <dummy/IPottyModel.hpp>
 
-class ConsoleEngine : public CommonEngine
+#include <fstream>
+#include <json/json.h>
+
+class ConsoleEngine : public IConsoleEngine
 {
     IPottyModel &adapter;
     bool running = true;
@@ -36,62 +39,64 @@ class ConsoleEngine : public CommonEngine
     #ifdef CONSOLE_BUILD
     ConsoleInputSystem cis;
     #endif
-public:
 
-    ConsoleEngine(IPottyModel &pottyModel) :
-        adapter(pottyModel),
-        crs(registry),
-        #ifdef CONSOLE_BUILD
-        cis(registry, *this),
-        #endif
-        pms(registry)
+    entt::registry registry;
+
+    Json::Value config;
+
+    // ! just a test method
+    void parse_config(const char *config_path)
     {
-        registry.set<ConsoleEngineContext>();
+        std::ifstream config_doc(config_path, std::ifstream::binary);
+        config_doc >> config;
+    }
+
+    void init()
+    {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
-        ctx.grid = std::make_unique<Grid>(8, 8, registry.create());
+        int width = config["grid"]["width"].asInt();
+        int height = config["grid"]["height"].asInt();
+        ctx.grid = std::make_unique<Grid>(width, height, registry.create());
+    }
 
-        // Flesh some entities.
-        auto myHero = registry.create();
-        registry.emplace<PushableComponent>(myHero);
-        registry.emplace<PullableComponent>(myHero);
-        registry.emplace<HealthComponent>(myHero, 100);
-        registry.emplace<NameComponent>(myHero, L"myHero");
-        registry.emplace<AsciiComponent>(myHero, L'*');
-        registry.emplace<GridPositionComponent>(myHero, Vector2(3, 3));
-        ctx.grid->set_position(Vector2(3, 3), myHero);
-        ctx.player = myHero;
-        std::wcout << "myHero: " << (uint32_t)myHero << "\r\n";
+    void generate_player(char ascii, int x, int y)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        auto entity = registry.create();
 
-        auto myRock = registry.create();
-        registry.emplace<HealthComponent>(myRock, 100);
-        registry.emplace<NameComponent>(myRock, L"myRock");
-        registry.emplace<AsciiComponent>(myRock, L'R');
-        registry.emplace<PushableComponent>(myRock);
-        registry.emplace<PullableComponent>(myRock);
-        registry.emplace<GridPositionComponent>(myRock, Vector2(5, 4));
-        ctx.grid->set_position(Vector2(5, 4), myRock);
-        std::wcout << "myRock: " << (uint32_t)myRock << "\r\n";
+        registry.emplace<PushableComponent>(entity);
+        registry.emplace<PullableComponent>(entity);
+        registry.emplace<HealthComponent>(entity, 100);
+        registry.emplace<NameComponent>(entity, L"myHero");
+        registry.emplace<AsciiComponent>(entity, L'*');
+        registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+        ctx.grid->set_position(Vector2(x, y), entity);
+        ctx.player = entity;
+    }
 
-        auto myEnemy = registry.create();
-        ctx.toddler = myEnemy;
-        registry.emplace<HealthComponent>(myEnemy, 100);
-        registry.emplace<NameComponent>(myEnemy, L"myEnemy");
-        registry.emplace<AsciiComponent>(myEnemy, L'T');
-        registry.emplace<PushableComponent>(myEnemy);
-        registry.emplace<PullableComponent>(myEnemy);
-        registry.emplace<GridPositionComponent>(myEnemy, Vector2(5, 5));
-        ctx.grid->set_position(Vector2(5, 5), myEnemy);
-        std::wcout << "myEnemy: " << (uint32_t)myEnemy << "\r\n";
+    void generate_toddler(char ascii, int x, int y)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        auto entity = registry.create();
 
-        auto myPotty = registry.create();
-        ctx.potty = myPotty;
-        registry.emplace<NameComponent>(myPotty, L"myPotty");
-        registry.emplace<AsciiComponent>(myPotty, L'P');
-        //registry.emplace<PushableComponent>(myPotty, [](auto &reg, auto target, auto direction, auto &xaction) -> bool {
-        //    return false;
-        //});
-        //registry.emplace<PullableComponent>(myPotty);
-        registry.emplace<ConsumableComponent>(myPotty, 
+        registry.emplace<HealthComponent>(entity, 100);
+        registry.emplace<NameComponent>(entity, L"myEnemy");
+        registry.emplace<AsciiComponent>(entity, L'T');
+        registry.emplace<PushableComponent>(entity);
+        registry.emplace<PullableComponent>(entity);
+        registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+        ctx.grid->set_position(Vector2(x, y), entity);
+        ctx.toddler = entity;
+    }
+
+    void generate_potty(char ascii, int x, int y)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        auto entity = registry.create();
+
+        registry.emplace<NameComponent>(entity, L"myPotty");
+        registry.emplace<AsciiComponent>(entity, L'P');
+        registry.emplace<ConsumableComponent>(entity, 
         [](auto &registry, auto consumed, auto consumer, auto &xaction) -> bool {
             return true;
         },
@@ -103,22 +108,85 @@ public:
                 xaction->push_back(std::make_shared<SinglePottyAction>(consumed, gpc.position));
             }
         });
-        registry.emplace<GridPositionComponent>(myPotty, Vector2(7, 7));
-        ctx.grid->set_position(Vector2(7, 7), myPotty);
-        std::wcout << "myPotty: " << (uint32_t)myPotty << "\r\n";
+        registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+        ctx.grid->set_position(Vector2(x, y), entity);
+        ctx.potty = entity;
+    }
 
-        // Create a scheduler to run through systems.
-        // TODO: Consider using a dependency graph of systems and using topo_sort.hpp
-        // TODO: to ensure they execute in the correct order.
+    void generate_ascii_entity(char ascii, int x, int y)
+    {
+        entt::entity entity;
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
 
-        // Note: ConsoleInputSystem needs to run first since we're not saving
-        //       captured input across frames.
-        // Note: EnTT claims that the scheduler is unordered. That said, the actual
-        //       implementation runs each of them in reverse order of attachment.
-        //scheduler.attach<ConsoleRenderSystem>(registry);
-        //scheduler.attach<MyAgingSystem>(cregistry);
-        //scheduler.attach<PlayerMovementSystem>(registry);
-        //scheduler.attach<ConsoleInputSystem>(registry, *this);
+        switch (ascii)
+        {
+            case '*':
+                generate_player(ascii, x, y);
+                break;
+            case 'P':
+                generate_potty(ascii, x, y);
+                break;
+            case 'T':
+                generate_toddler(ascii, x, y);
+                break;
+            case 'W':
+                entity = registry.create();
+                registry.emplace<NameComponent>(entity, L"myWall");
+                registry.emplace<AsciiComponent>(entity, L'W');
+                registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+                ctx.grid->set_position(Vector2(x, y), entity);
+                break;
+            case 'D':
+                entity = registry.create();
+                registry.emplace<PushableComponent>(entity);
+                registry.emplace<PullableComponent>(entity);
+                registry.emplace<NameComponent>(entity, L"myDuck");
+                registry.emplace<AsciiComponent>(entity, L'D');
+                registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+                ctx.grid->set_position(Vector2(x, y), entity);
+                break;
+        }
+    }
+
+    void load_level(int level_idx)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+
+        // Clear the current volatile entities and grid.
+        ctx.grid->clear();
+        // TODO: Should be registry<GridPositionComponent>.clear()?
+        registry.clear();
+
+        const Json::Value level = config["levels"][level_idx];
+
+        for (int y = 0; y < level.size(); ++y)
+        {
+            const char *row = level[y].asCString();
+            for (int x = 0; x < std::strlen(row); ++x)
+            {
+                generate_ascii_entity(row[x], x, y);
+            }
+        }
+    }
+
+public:
+
+    ConsoleEngine(IPottyModel &pottyModel) :
+        registry(),
+        adapter(pottyModel),
+        crs(registry),
+        #ifdef CONSOLE_BUILD
+        cis(registry, *this),
+        #endif
+        pms(registry)
+    {
+        registry.set<ConsoleEngineContext>();
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+
+        parse_config("../potty-config.json");
+        init();
+        load_level(ctx.current_level);
+
     }
 
     virtual void start()

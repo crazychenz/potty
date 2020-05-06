@@ -6,7 +6,10 @@ public:
     ConsoleAdapter() { }
     virtual ~ConsoleAdapter() {}
 
-    virtual void goal_reached() {}
+    virtual void goal_reached()
+    {
+        std::wcout << "Goal reached.\r\n";
+    }
 
     virtual void on_updated() {}
     

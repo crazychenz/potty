@@ -44,7 +44,9 @@ public:
         std::unique_ptr<ITransaction> xaction = estimate_xaction();
         if (xaction == nullptr)
         {
-            // TODO: Handle no memory?
+            // move rejected
+            ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
+            return;
         }
 
         // Check validity of xaction.
@@ -233,6 +235,9 @@ public:
                     break;
                 }
             }
+
+            // If we're here, we likely hit a wall.
+            return nullptr;
 
             next: // Advance to the next space.
             position = nextPosition;
