@@ -7,13 +7,12 @@
 #include <memory>
 #include <vector>
 
-#if __GNUC__ == 7
-    //#if defined(__MINGW32__) || defined(__MINGW64__)
+#if (__GNUC__ <= 7) || defined(__clang__)
     #include <experimental/filesystem>
     namespace filesystem = std::experimental::filesystem;
-    //#else
-    //    #include <filesystem>
-    //#endif
+#else
+    #include <filesystem>
+    namespace filesystem = std::filesystem;
 #endif
 
 #include <utils/entt_wrap.hpp>
