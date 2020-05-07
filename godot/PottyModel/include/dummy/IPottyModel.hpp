@@ -8,6 +8,8 @@ public:
 
     virtual void goal_reached() {}
 
+    virtual void game_beat() {}
+
     virtual void on_updated() {}
     
     // TODO: Add parameters to this.

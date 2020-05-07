@@ -9,4 +9,6 @@ public:
     virtual void start() {}
     virtual void stop() {}
 
+    virtual void next_level() {}
+
 };

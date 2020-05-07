@@ -6,24 +6,96 @@
 
     "levels": [
         [
+            "WWWWWWWW",
+            "WWWWWWWW",
+            "WWWWWWWW",
             "........",
-            ".*....W.",
+            ".*.T..P.",
             "........",
-            "........",
-            "....D...",
-            "....T...",
-            "........",
-            ".......P"
+            "WWWWWWWW",
+            "WWWWWWWW"
+        ],
+        [
+    
+            "WWWWWWWW",
+            "WWWWWWWW",
+            "WWWWWWWW",
+            "...WWWWW",
+            ".*.DT.P.",
+            "...WWWWW",
+            "WWWWWWWW",
+            "WWWWWWWW"
+        ],
+        [
+            "....WWWW",
+            "....WWWW",
+            ".*..TWWW",
+            "....WWWW",
+            "....WWWW",
+            "....PWWW",
+            "....WWWW",
+            "....WWWW"
+        ],
+        [
+            "....WWWW",
+            ".*..WWWW",
+            "....TWWW",
+            "WWW.WWWW",
+            "WWWDWWWW",
+            "WWWPWWWW",
+            "WWWWWWWW",
+            "WWWWWWWW"
         ],
         [
             "WWWWWWWW",
-            "W......W",
-            "W.*....W",
-            "W....D.W",
-            "W....T.W",
-            "W......W",
-            "W.....PW",
+            "PD.D.DT.",
+            "W.W.W.W.",
+            "W.W.W.W.",
+            "W.......",
+            "WWWWWWW.",
+            "W*......",
+            "WWWWWWWW"
+        ],
+        [
+            "WWWWWWWW",
+            "PD.C.D..",
+            "W.W.WTW.",
+            "W.W.W.W.",
+            "W.......",
+            "WWWWWWW.",
+            "W*......",
+            "WWWWWWWW"
+        ],
+        [
+            "*.T.....",
+            "WWWWWW..",
+            "WWWWW...",
+            "..C....C",
+            "...WWWWW",
+            "..WWWWWW",
+            "..C....P",
             "WWWWWWWW"
         ]
+        
+        //[
+        //    "........",
+        //    ".*....W.",
+        //    "........",
+        //    "........",
+        //    "....D...",
+        //    "....T...",
+        //    "........",
+        //    ".......P"
+        //],
+        //[
+        //    "WWWWWWWW",
+        //    "W......W",
+        //    "W.*....W",
+        //    "W....D.W",
+        //    "W....T.W",
+        //    "W......W",
+        //    "W.....PW",
+        //    "WWWWWWWW"
+        //]
     ]
 }

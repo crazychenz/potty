@@ -1,12 +1,20 @@
 #pragma once
 
-#include <iostream> // for debug wcout
-
 #include <time.h> // clock_gettime
-#include <unistd.h> // usleep // TODO: Get rid of this.
 
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include <vector>
+
+#if __GNUC__ == 7
+    //#if defined(__MINGW32__) || defined(__MINGW64__)
+    #include <experimental/filesystem>
+    namespace filesystem = std::experimental::filesystem;
+    //#else
+    //    #include <filesystem>
+    //#endif
+#endif
 
 #include <utils/entt_wrap.hpp>
 
@@ -24,7 +32,6 @@
 #include <dummy/ConsoleEngineContext.hpp>
 #include <dummy/IPottyModel.hpp>
 
-#include <fstream>
 #include <json/json.h>
 
 class ConsoleEngine : public IConsoleEngine
@@ -44,7 +51,6 @@ class ConsoleEngine : public IConsoleEngine
 
     Json::Value config;
 
-    // ! just a test method
     void parse_config(const char *config_path)
     {
         std::ifstream config_doc(config_path, std::ifstream::binary);
@@ -156,6 +162,8 @@ class ConsoleEngine : public IConsoleEngine
         ctx.grid->clear();
         // TODO: Should be registry<GridPositionComponent>.clear()?
         registry.clear();
+        ctx.goal_reached = false;
+        ctx.redraw = true;
 
         const Json::Value level = config["levels"][level_idx];
 
@@ -171,7 +179,7 @@ class ConsoleEngine : public IConsoleEngine
 
 public:
 
-    ConsoleEngine(IPottyModel &pottyModel) :
+    ConsoleEngine(IPottyModel &pottyModel, const char *config_path = "../potty-config.json") :
         registry(),
         adapter(pottyModel),
         crs(registry),
@@ -183,8 +191,25 @@ public:
         registry.set<ConsoleEngineContext>();
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
-        parse_config("../potty-config.json");
+        std::wcout << "Current path is " << filesystem::current_path() << "\r\n";
+        std::wcout << "loading config from " << config_path << "\r\n";
+
+        parse_config(config_path);
         init();
+        load_level(ctx.current_level);
+
+    }
+
+    virtual void next_level()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        ctx.current_level += 1;
+        if (ctx.current_level > ctx.last_level)
+        {
+            ctx.current_level = 0;
+            adapter.game_beat();
+        }
+
         load_level(ctx.current_level);
 
     }
@@ -214,9 +239,6 @@ public:
     {
         running = false;
     }
-
-
-
 
     virtual void update(double delta)
     {

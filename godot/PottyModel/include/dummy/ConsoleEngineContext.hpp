@@ -18,7 +18,7 @@ public:
 
     // Game state
     int current_level = 0;
-    int last_level = 0;
+    int last_level = 6;
     std::unique_ptr<Grid> grid;
     
     // Level state

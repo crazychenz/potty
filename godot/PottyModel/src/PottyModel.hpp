@@ -16,7 +16,7 @@ class PottyModel : public IPottyModel, public godot::Node {
     double time_passed = 0;
 
 public:
-    PottyModel() : engine(*this) { }
+    PottyModel(const char *config_path = "potty-config.json") : engine(*this, config_path) { }
 
     /** `_init` must exist as it is called by Godot. */
     void _init() {

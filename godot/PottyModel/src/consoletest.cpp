@@ -10,11 +10,17 @@ using std::wcout;
 
 void fini(int arg);
 
-int main()
+int main(int argc, char **argv)
 {
     signal(SIGINT, fini);
-    ConsoleAdapter adapter;
-    ConsoleEngine(adapter).start();
+    if (argc > 1)
+    {
+        ConsoleAdapter(argv[1]).start();
+    }
+    else
+    {
+        ConsoleAdapter().start();
+    }
     return 0;
 }
 

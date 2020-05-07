@@ -2,13 +2,27 @@
 
 class ConsoleAdapter : public IPottyModel {
     
+    ConsoleEngine engine;
+
 public:
-    ConsoleAdapter() { }
+    ConsoleAdapter(const char *config_path = "../potty-config.json") : engine(*this, config_path) { }
+
     virtual ~ConsoleAdapter() {}
+
+    void start() {
+        engine.start();
+    }
 
     virtual void goal_reached()
     {
         std::wcout << "Goal reached.\r\n";
+        engine.next_level();
+    }
+
+    virtual void game_beat()
+    {
+        std::wcout << "Game Beat.\r\n";
+        std::wcout << "Starting over.\r\n";
     }
 
     virtual void on_updated() {}
