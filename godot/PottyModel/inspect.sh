@@ -1,6 +1,6 @@
 #!/bin/sh
 
-docker run -ti -v $(pwd):/home/user/godot --rm crazychenz/godot_builder /bin/bash 
+docker run -ti --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --security-opt apparmor=unconfined -v $(pwd):/home/user/godot --rm crazychenz/godot_builder /bin/bash 
 
 #docker run -ti -v $(pwd):/home/user/godot --rm crazychenz/godot_builder /bin/bash -c \
 #    "cd godot ; x86_64-w64-mingw32-g++ -fPIC -o bin/libPottyModel.dll -shared godot-cpp/bin/libgodot-cpp.linux.debug.64.a"

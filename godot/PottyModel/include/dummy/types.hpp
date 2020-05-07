@@ -13,12 +13,18 @@ const int PLAYER_MOVE_WAITING_STATE = 0;
 const int PLAYER_MOVE_PROCESSING_STATE = 1;
 const int PLAYER_MOVE_PENDING_STATE = 2;
 const int PLAYER_MOVE_COMMIT_STATE = 3;
+const int PLAYER_MOVE_LEVELSELECT_STATE = 4;
+const int PLAYER_MOVE_GAMEOVER_STATE = 5;
 
 /*
     State Machine
 ----------------------
 
-WAITING <------ COMMIT
+
+ ------------ LEVELSELECT <--------
+ |                ^               |
+ V                |               |
+WAITING <------ COMMIT  ------> GAMEOVER
  |   ^             ^
  |   |             |
  V   |             |

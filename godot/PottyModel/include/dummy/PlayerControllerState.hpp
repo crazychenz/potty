@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Model/Vector2.hpp>
+#include <model/Vector2.hpp>
 
 class PlayerControllerState
 {

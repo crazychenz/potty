@@ -18,7 +18,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1 &&
     update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix && \
     update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
-RUN apt-get install -y --no-install-recommends llvm-6.0-tools clang-tools
+RUN apt-get install -y --no-install-recommends llvm-6.0-tools clang-tools lldb
 
 # Add a standard user and switch to user context
 ENV USER="user"

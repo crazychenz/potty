@@ -164,7 +164,7 @@ class ConsoleEngine : public IConsoleEngine
         ctx.goal_reached = false;
         ctx.redraw = true;
 
-        const Json::Value level = config["levels"][level_idx];
+        const Json::Value level = config["levels"][level_idx - 1];
 
         for (int y = 0; y < level.size(); ++y)
         {
@@ -195,22 +195,24 @@ public:
 
         parse_config(config_path);
         init();
-        load_level(ctx.current_level);
+        first_level();
 
+    }
+
+    virtual void first_level()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        ctx.current_level = 0;
+        next_level();
+        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
     }
 
     virtual void next_level()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         ctx.current_level += 1;
-        if (ctx.current_level > ctx.last_level)
-        {
-            ctx.current_level = 0;
-            adapter.game_beat();
-        }
-
         load_level(ctx.current_level);
-
+        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
     }
 
     virtual void start()
@@ -257,13 +259,6 @@ public:
                 "ctx.done_xaction_list.size = " + std::to_string(ctx.done_xaction_list.size()) + "\n";
             adapter.meta_update(meta);
             metaTimeout = 0.001;
-        }
-
-        // Run through all the registered processes (i.e. systems).
-        //scheduler.update(delta);
-        if (ctx.goal_reached)
-        {
-            adapter.goal_reached();
         }
 
         #ifdef CONSOLE_BUILD
@@ -335,7 +330,21 @@ public:
         // Everything *should* be OK, but we resend the board state updated anyway.
         adapter.on_updated();
 
-        //std::wcout << "ctx.player_move_state = PLAYER_MOVE_WAITING_STATE\r\n";
+        // Run through all the registered processes (i.e. systems).
+        //scheduler.update(delta);
+        if (ctx.goal_reached)
+        {
+            if (ctx.current_level == ctx.last_level)
+            {
+                ctx.player_move_state = PLAYER_MOVE_GAMEOVER_STATE;
+                adapter.game_beat();
+                return;
+            }
+            ctx.player_move_state = PLAYER_MOVE_LEVELSELECT_STATE;
+            adapter.goal_reached();
+            return;
+        }
+
         ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
     }
 

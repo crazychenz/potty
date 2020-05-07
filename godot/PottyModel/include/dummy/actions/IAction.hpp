@@ -13,6 +13,6 @@ public:
     virtual void perform(entt::registry &registry) {}
     virtual void unperform(entt::registry &registry) {}
     virtual Vector2 get_next() { return Vector2(-1000000, -1000000); } // TODO: Handle this more intelligently
-    virtual Vector2 get_prev() {}
+    virtual Vector2 get_prev() { return Vector2(-1000000, -1000000); }
     /*virtual entt::entity get_entity() { return entity; }*/
 };

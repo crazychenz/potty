@@ -1,0 +1,27 @@
+# Launch process
+#     r
+# Launch process with arguments:
+#     process launch -- <args>
+# View processes arguments:
+#     settings show target.run-args
+# Break on function
+#     b functionname
+# Break on file:line
+#     b file:line
+#     br s -f test.c -l 12
+#     breakpoint set --file test.c --line 12
+# Conditional breakpoint
+#     br s -n foo -c '(int)strcmp(y,"hello") == 0'
+# List break points
+#     breakpoint list
+#     br l
+# Mutate break point list
+#     breakpoint [delete|disable|enable] <index>
+#     br [del|dis|en] <index>
+# Print variables
+#     p <label>
+#     p/x <label>
+#     display <label>
+
+b ConsoleEngine.hpp:337
+r
