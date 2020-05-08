@@ -5,7 +5,9 @@ class ConsoleAdapter : public IPottyModel {
     ConsoleEngine engine;
 
 public:
-    ConsoleAdapter(const char *config_path = "potty-config.json") : engine(*this, config_path) { }
+    ConsoleAdapter(const char *config_path = "potty-config.json") : 
+        engine(*this, config_path) 
+    { engine.start_new_game(); }
 
     virtual ~ConsoleAdapter() {}
 
@@ -23,7 +25,7 @@ public:
     {
         std::wcout << "Game Beat.\r\n";
         std::wcout << "Starting over.\r\n";
-        engine.first_level();
+        engine.start_new_game();
     }
 
     virtual void on_updated() {}

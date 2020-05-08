@@ -163,8 +163,12 @@ class ConsoleEngine : public IConsoleEngine
         registry.clear();
         ctx.goal_reached = false;
         ctx.redraw = true;
+        // Wipe action lists
+        ctx.new_xaction_list.clear();
+        ctx.pending_xaction_list.clear();
+        ctx.done_xaction_list.clear();
 
-        const Json::Value level = config["levels"][level_idx - 1];
+        const Json::Value level = config["levels"][level_idx];
 
         for (int y = 0; y < level.size(); ++y)
         {
@@ -195,24 +199,28 @@ public:
 
         parse_config(config_path);
         init();
-        first_level();
 
     }
 
-    virtual void first_level()
+    virtual void reset_level()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        load_level(ctx.current_level);
+        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
+    }
+
+    virtual void start_new_game()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         ctx.current_level = 0;
-        next_level();
-        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
+        reset_level();
     }
 
     virtual void next_level()
     {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         ctx.current_level += 1;
-        load_level(ctx.current_level);
-        ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
+        reset_level();
     }
 
     virtual void start()
@@ -346,6 +354,12 @@ public:
         }
 
         ctx.player_move_state = PLAYER_MOVE_WAITING_STATE;
+    }
+
+    virtual bool currently_playing()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        return ctx.player_move_state != PLAYER_MOVE_GAMEOVER_STATE;
     }
 
     // Note: Godot needs to set this to (0, 0) when nothing is pressed.

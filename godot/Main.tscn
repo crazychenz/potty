@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://View.gd" type="Script" id=1]
-[ext_resource path="res://Model.gdns" type="Script" id=2]
 [ext_resource path="res://Control.gd" type="Script" id=3]
 [ext_resource path="res://Main_UIControl.gd" type="Script" id=4]
 [ext_resource path="res://assets/fonts/noto/noto-regular-touchable.tres" type="DynamicFont" id=5]
@@ -52,29 +51,39 @@ custom_constants/separation = 21
 
 [node name="MarginContainer" type="MarginContainer" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
 margin_right = 415.0
-margin_bottom = 111.0
-custom_constants/margin_top = 32
-custom_constants/margin_bottom = 32
+margin_bottom = 79.0
+custom_constants/margin_top = 16
+custom_constants/margin_bottom = 16
 
 [node name="GameOverLabel" type="Label" parent="ViewWidgets/GameOverPanel/VBoxContainer/MarginContainer"]
-margin_top = 32.0
+margin_top = 16.0
 margin_right = 415.0
-margin_bottom = 79.0
+margin_bottom = 63.0
 custom_fonts/font = ExtResource( 5 )
 text = "Game Over"
 align = 1
 
-[node name="PlayAgainButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_top = 132.0
+[node name="NextLevelButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
+margin_top = 100.0
 margin_right = 415.0
-margin_bottom = 185.0
+margin_bottom = 166.0
+size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
-text = "Next"
+text = "Next Level"
+
+[node name="PlayAgainButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
+margin_top = 187.0
+margin_right = 415.0
+margin_bottom = 253.0
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 5 )
+text = "Play Again"
 
 [node name="ReturnButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_top = 206.0
+margin_top = 274.0
 margin_right = 415.0
-margin_bottom = 259.0
+margin_bottom = 341.0
+size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
 text = "Return To Menu"
 
@@ -209,6 +218,3 @@ margin_top = 179.0
 margin_right = 1407.0
 margin_bottom = 193.0
 text = "Each time the player is moved, the bladder fills up a bit."
-
-[node name="Model" type="Node" parent="."]
-script = ExtResource( 2 )

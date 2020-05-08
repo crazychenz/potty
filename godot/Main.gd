@@ -26,7 +26,7 @@ func _ready():
     # View depends on PresentationModel
     
     # Controller initialization allows user interaction
-    $Controller.ready($Presentation, $Model)
+    $Controller.ready($Presentation, PottyModel)
     $ViewWidgets.controller_ready($Controller)
     $ViewCanvas.controller_ready($Controller)
     $HIDInput.controller_ready($Controller)

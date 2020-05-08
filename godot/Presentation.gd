@@ -36,6 +36,12 @@ signal timescale_change()
 func timescale_change():
     emit_signal("timescale_change")
 
+
+signal game_beat
+func game_beat():
+    emit_signal("game_beat")
+
+
 signal goal_reached
 func goal_reached():
     emit_signal("goal_reached")

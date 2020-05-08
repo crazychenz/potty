@@ -13,12 +13,12 @@ public:
 
     // Engine state
     PlayerControllerState player_controller_state;
-    int player_move_state = PLAYER_MOVE_LEVELSELECT_STATE;
+    int player_move_state = PLAYER_MOVE_GAMEOVER_STATE;
     bool redraw = false;
 
     // Game state
-    int current_level = 1;
-    int last_level = 2; //7;
+    int current_level = 0;
+    int last_level = 6; // TODO: Automatic this.
     std::unique_ptr<Grid> grid;
     
     // Level state

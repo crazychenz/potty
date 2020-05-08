@@ -5,8 +5,9 @@ var presentation
 
 onready var MainMenuButton = find_node("MainMenuButton")
 onready var PlayAgainButton = find_node("PlayAgainButton")
+onready var NextLevelButton = find_node("NextLevelButton")
 onready var ReturnButton = find_node("ReturnButton")
-
+onready var GameOverLabel = find_node("GameOverLabel")
 onready var GridOutput = find_node("GridOutput")
 
 #onready var BladderValue : ProgressBar = find_node("BladderValue")
@@ -17,18 +18,28 @@ func ready(presentation_param):
     presentation.connect("updated_state_string", self, "_on_updated_state_string")
     presentation.connect("goal_reached", self, "_on_goal_reached")
     presentation.connect("timescale_change", self, "_on_timescale_change")
+    presentation.connect("game_beat", self, "_on_game_beat")
 
 
 func _on_timescale_change():
     $Timescale.text = "Time Scale: %s" % Engine.time_scale
 
 
-func _on_goal_reached():
+func _on_game_beat():
+    GameOverLabel.text = "Game Complete"
+    NextLevelButton.visible = false
     $GameOverPanel.set_visible(true)
+
+
+func _on_goal_reached():
+    GameOverLabel.text = "Level Complete"
+    $GameOverPanel.set_visible(true)
+
 
 func controller_ready(controller_param):
     controller = controller_param
     MainMenuButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
+    NextLevelButton.connect("pressed", controller, "_on_NextLevelButton_pressed")
     PlayAgainButton.connect("pressed", controller, "_on_PlayAgainButton_pressed")
     ReturnButton.connect("pressed", controller, "_on_MainMenuButton_pressed")
     

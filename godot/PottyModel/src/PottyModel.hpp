@@ -28,6 +28,16 @@ public:
         engine.update((double)delta);
     }
 
+    void start_new_game()
+    {
+        engine.start_new_game();
+    }
+
+    bool currently_playing()
+    {
+        return engine.currently_playing();
+    }
+
     void player_move(godot::Vector2 vec) {
         //Godot::print("Player moved ");
         engine.player_move(Vector2(vec.x, vec.y));
@@ -52,9 +62,24 @@ public:
         return ret;
     }
 
+    virtual void reset_level()
+    {
+        engine.reset_level();
+    }
+
+    virtual void next_level()
+    {
+        engine.next_level();
+    }
+
     virtual void goal_reached()
     {
         emit_signal("goal_reached");
+    }
+
+    virtual void game_beat()
+    {
+        emit_signal("game_beat");
     }
 
     void on_updated()
@@ -100,6 +125,10 @@ public:
         godot::register_method("grid_ascii_state", &PottyModel::grid_ascii_state);
         godot::register_method("do_commit", &PottyModel::do_commit);
         godot::register_method("player_pull", &PottyModel::player_pull);
+        godot::register_method("start_new_game", &PottyModel::start_new_game);
+        godot::register_method("currently_playing", &PottyModel::currently_playing);
+        godot::register_method("reset_level", &PottyModel::reset_level);
+        godot::register_method("next_level", &PottyModel::next_level);
 
 
 
@@ -118,6 +147,7 @@ public:
         godot::register_signal<PottyModel>("updated");
 
         godot::register_signal<PottyModel>("goal_reached");
+        godot::register_signal<PottyModel>("game_beat");
 
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("meta_update", "meta", GODOT_VARIANT_TYPE_STRING);

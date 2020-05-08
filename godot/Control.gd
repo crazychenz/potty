@@ -3,6 +3,7 @@ extends Node
 var presentation
 var model
 
+var goal_reached := false
 
 # While tweening, queue the transactions here.
 var xaction_queue = []
@@ -15,11 +16,18 @@ func ready(presentation_param, model_param):
     model.connect("updated", self, "_on_model_updated")
     model.connect("updated_precommit", self, "_on_model_updated_precommit")
     model.connect("goal_reached", self, "_on_goal_reached")
+    model.connect("game_beat", self, "_on_game_beat")
 
 func _on_goal_reached() -> void:
+    goal_reached = true
     presentation.goal_reached()
 
 func _on_MainMenuButton_pressed() -> void:
+    if goal_reached == true:
+        # If user went to main menu instead of next level, 
+        # we assume next level.
+        PottyModel.next_level()
+        goal_reached = false
     g.change_scene("res://Title.tscn")
 
 
@@ -35,7 +43,19 @@ func timescale_up():
     presentation.timescale_change()
     
 
+func _on_game_beat() -> void:
+    presentation.game_beat()
+
+
 func _on_PlayAgainButton_pressed() -> void:
+    PottyModel.reset_level()
+    goal_reached = false
+    g.change_scene("res://Main.tscn")
+
+
+func _on_NextLevelButton_pressed() -> void:
+    PottyModel.next_level()
+    goal_reached = false
     g.change_scene("res://Main.tscn")
 
 

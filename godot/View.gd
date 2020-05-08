@@ -7,9 +7,15 @@ func ready(presentation):
     self.presentation = presentation
     presentation.connect("updated_state_string", self, "_on_updated_state_string")
     presentation.connect("updated_precommit", self, "_on_updated_precommit")
+    presentation.connect("goal_reached", self, "_on_goal_reached")
+    presentation.connect("game_beat", self, "_on_goal_reached")
 
 func controller_ready(controller):
     self.controller = controller
+
+
+func _on_goal_reached():
+    visible = false
 
 
 #func _ready():
@@ -94,7 +100,7 @@ const TYPE_EMPTY = '.'     #"Empty"
 const TYPE_NPC = '*'       #"Npc"
 const TYPE_GRASS = '.'     #"Grass"
 const TYPE_BRICKWALL = 'W' #"BrickWall"
-const TYPE_DUCK = 'R'      #"Duck"
+const TYPE_DUCK = 'D'      #"Duck"
 const TYPE_CHICKEN = 'C'   #"Chicken"
 const TYPE_POTTY = 'P'     #"Potty"
 const TYPE_BABY = 'T'      #"Baby"
