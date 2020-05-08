@@ -17,6 +17,17 @@ func ready(presentation_param, model_param):
     model.connect("updated_precommit", self, "_on_model_updated_precommit")
     model.connect("goal_reached", self, "_on_goal_reached")
     model.connect("game_beat", self, "_on_game_beat")
+    model.connect("happiness_updated", self, "_on_happiness_updated")
+    model.connect("bladder_updated", self, "_on_bladder_updated")
+
+
+func _on_happiness_updated(value) -> void:
+    presentation.happiness_updated(value)
+
+func _on_bladder_updated(value) -> void:
+    print("Bladder (Godot): %s" % value)
+    presentation.bladder_updated(value)
+
 
 func _on_goal_reached() -> void:
     goal_reached = true

@@ -14,4 +14,7 @@ public:
     virtual void next_level() {}
     virtual bool currently_playing() {}
 
+    virtual void happiness_updated(int value) {}
+    virtual void bladder_updated(int value) {}
+
 };

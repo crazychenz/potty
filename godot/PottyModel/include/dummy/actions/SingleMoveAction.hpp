@@ -38,6 +38,7 @@ public:
 
     ~SingleMoveAction() {}
 
+    virtual bool has_movement() { return true; }
     Vector2 get_next() { return next_position; }
     Vector2 get_prev() { return prev_position; }
 

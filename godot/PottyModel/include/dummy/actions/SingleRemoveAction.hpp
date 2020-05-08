@@ -26,6 +26,7 @@ public:
 
     ~SingleRemoveAction() {}
 
+    virtual bool has_movement() { return true; }
     entt::entity get_entity() { return entity; }
     Vector2 get_prev() { return prev_position; }
 

@@ -28,6 +28,9 @@ public:
         engine.start_new_game();
     }
 
+    virtual void happiness_updated(int value) {}
+    virtual void bladder_updated(int value) {}
+
     virtual void on_updated() {}
     
     // TODO: Add parameters to this.

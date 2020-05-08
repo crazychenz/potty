@@ -16,4 +16,7 @@ public:
     virtual void on_updated_precommit(std::unique_ptr<std::vector<Vector2>> simple_moves) {}
 
     virtual void meta_update(std::string &str) {}
+
+    virtual void happiness_updated(int value) {}
+    virtual void bladder_updated(int value) {}
 };

@@ -25,6 +25,7 @@
 #include <dummy/systems/ConsoleInputSystem.hpp>
 #endif
 #include <dummy/systems/PlayerMovementSystem.hpp>
+#include <dummy/systems/BladderSystem.hpp>
 #include <dummy/systems/ConsoleRenderSystem.hpp>
 #include <dummy/IConsoleEngine.hpp>
 #include <dummy/actions/IAction.hpp>
@@ -41,6 +42,7 @@ class ConsoleEngine : public IConsoleEngine
     double timePassed = 0.0;
     double metaTimeout = 0.2;
     PlayerMovementSystem pms;
+    BladderSystem bladder;
     ConsoleRenderSystem crs;
     #ifdef CONSOLE_BUILD
     ConsoleInputSystem cis;
@@ -87,8 +89,16 @@ class ConsoleEngine : public IConsoleEngine
         registry.emplace<HealthComponent>(entity, 100);
         registry.emplace<NameComponent>(entity, L"myEnemy");
         registry.emplace<AsciiComponent>(entity, L'T');
-        registry.emplace<PushableComponent>(entity);
-        registry.emplace<PullableComponent>(entity);
+        registry.emplace<PushableComponent>(entity,
+        [](auto &reg, auto us, auto them, auto dir, auto &xaction) -> bool {
+            xaction->push_back(std::make_shared<HappinessAction>(us, -5));
+            return true;
+        });
+        registry.emplace<PullableComponent>(entity,
+        [](auto &reg, auto us, auto them, auto dir, auto &xaction) -> bool {
+            xaction->push_back(std::make_shared<HappinessAction>(us, -5));
+            return true;
+        });
         registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
         ctx.grid->set_position(Vector2(x, y), entity);
         ctx.toddler = entity;
@@ -118,6 +128,34 @@ class ConsoleEngine : public IConsoleEngine
         ctx.potty = entity;
     }
 
+    void generate_chicken(char ascii, int x, int y)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        auto entity = registry.create();
+
+        registry.emplace<NameComponent>(entity, L"myChicken");
+        registry.emplace<AsciiComponent>(entity, L'C');
+        registry.emplace<ConsumableComponent>(entity, 
+        [](auto &registry, auto consumed, auto consumer, auto &xaction) -> bool {
+            return true;
+        },
+        [](auto &registry, auto consumed, auto consumer, auto &xaction) -> void {
+            auto &ctx = registry.template ctx<ConsoleEngineContext>();
+            if (consumer == ctx.toddler)
+            {
+                // Consumer is baby, it's happiness is increased.
+                xaction->push_back(std::make_shared<HappinessAction>(consumer, 10));
+            }
+
+            // Everything can consume this object.
+            auto &gpc = registry.template get<GridPositionComponent>(consumed);
+            xaction->push_back(std::make_shared<SingleRemoveAction>(consumed, gpc.position));
+        });
+        registry.emplace<GridPositionComponent>(entity, Vector2(x, y));
+        ctx.grid->set_position(Vector2(x, y), entity);
+        ctx.potty = entity;
+    }
+
     void generate_ascii_entity(char ascii, int x, int y)
     {
         entt::entity entity;
@@ -133,6 +171,9 @@ class ConsoleEngine : public IConsoleEngine
                 break;
             case 'T':
                 generate_toddler(ascii, x, y);
+                break;
+            case 'C':
+                generate_chicken(ascii, x, y);
                 break;
             case 'W':
                 entity = registry.create();
@@ -167,6 +208,8 @@ class ConsoleEngine : public IConsoleEngine
         ctx.new_xaction_list.clear();
         ctx.pending_xaction_list.clear();
         ctx.done_xaction_list.clear();
+        ctx.set_happiness(100);
+        ctx.set_bladder(0);
 
         const Json::Value level = config["levels"][level_idx];
 
@@ -189,9 +232,10 @@ public:
         #ifdef CONSOLE_BUILD
         cis(registry, *this),
         #endif
-        pms(registry)
+        pms(registry),
+        bladder(registry)
     {
-        registry.set<ConsoleEngineContext>();
+        registry.set<ConsoleEngineContext>(*this);
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
         std::wcout << "Current path is " << filesystem::current_path() << "\r\n";
@@ -221,6 +265,20 @@ public:
         auto &ctx = registry.ctx<ConsoleEngineContext>();
         ctx.current_level += 1;
         reset_level();
+    }
+
+    virtual void happiness_updated(int value)
+    {
+        adapter.happiness_updated(value);
+    }
+
+    // TODO: Need to support "pause_bladder()" from adapter class
+    // TODO: Need to support losing based on happiness==0 or bladder==100
+    // TODO: Need to grade level completion.
+
+    virtual void bladder_updated(int value)
+    {
+        adapter.bladder_updated(value);
     }
 
     virtual void start()
@@ -274,6 +332,7 @@ public:
         #endif
 
         pms.update(delta);
+        bladder.update(delta);
 
         #ifdef CONSOLE_BUILD
         crs.update(delta);

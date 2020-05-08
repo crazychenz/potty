@@ -9,6 +9,8 @@ onready var NextLevelButton = find_node("NextLevelButton")
 onready var ReturnButton = find_node("ReturnButton")
 onready var GameOverLabel = find_node("GameOverLabel")
 onready var GridOutput = find_node("GridOutput")
+onready var HappinessValue = find_node("HappinessValue")
+onready var BladderValue = find_node("BladderValue")
 
 #onready var BladderValue : ProgressBar = find_node("BladderValue")
 #onready var HappinessValue : ProgressBar = find_node("HappinessValue")
@@ -19,6 +21,16 @@ func ready(presentation_param):
     presentation.connect("goal_reached", self, "_on_goal_reached")
     presentation.connect("timescale_change", self, "_on_timescale_change")
     presentation.connect("game_beat", self, "_on_game_beat")
+    presentation.connect("happiness_updated", self, "_on_happiness_updated")
+    presentation.connect("bladder_updated", self, "_on_bladder_updated")
+
+
+func _on_happiness_updated(value):
+    HappinessValue.value = value
+
+
+func _on_bladder_updated(value):
+    BladderValue.value = value
 
 
 func _on_timescale_change():

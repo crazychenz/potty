@@ -82,6 +82,16 @@ public:
         emit_signal("game_beat");
     }
 
+    virtual void happiness_updated(int value)
+    {
+        emit_signal("happiness_updated", value);
+    }
+
+    virtual void bladder_updated(int value)
+    {
+        emit_signal("bladder_updated", value);
+    }
+
     void on_updated()
     {
         //Godot::print("PottyModel.hpp: updated signal");
@@ -148,6 +158,9 @@ public:
 
         godot::register_signal<PottyModel>("goal_reached");
         godot::register_signal<PottyModel>("game_beat");
+
+        godot::register_signal<PottyModel>("happiness_updated", "value", GODOT_VARIANT_TYPE_INT);
+        godot::register_signal<PottyModel>("bladder_updated", "value", GODOT_VARIANT_TYPE_INT);
 
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("meta_update", "meta", GODOT_VARIANT_TYPE_STRING);

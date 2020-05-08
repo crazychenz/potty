@@ -37,6 +37,16 @@ func timescale_change():
     emit_signal("timescale_change")
 
 
+signal happiness_updated(value)
+func happiness_updated(value):
+    emit_signal("happiness_updated", value)
+
+
+signal bladder_updated(value)
+func bladder_updated(value):
+    emit_signal("bladder_updated", value)
+
+
 signal game_beat
 func game_beat():
     emit_signal("game_beat")
