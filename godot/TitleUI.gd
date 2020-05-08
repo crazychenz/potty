@@ -16,6 +16,7 @@ func _ready() -> void:
 
 
 func _on_ContinueGameButton_pressed() -> void:
+    PottyModel.pause_bladder(false)
     g.change_scene("res://Main.tscn")
 
 

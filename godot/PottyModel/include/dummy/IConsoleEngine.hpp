@@ -16,5 +16,6 @@ public:
 
     virtual void happiness_updated(int value) {}
     virtual void bladder_updated(int value) {}
+    virtual void pause_bladder(bool value) {}
 
 };

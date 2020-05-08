@@ -9,12 +9,12 @@ func ready(presentation):
     presentation.connect("updated_precommit", self, "_on_updated_precommit")
     presentation.connect("goal_reached", self, "_on_goal_reached")
     presentation.connect("game_beat", self, "_on_goal_reached")
+    presentation.connect("game_failed", self, "_on_goal_reached", [0])
 
 func controller_ready(controller):
     self.controller = controller
 
-
-func _on_goal_reached():
+func _on_goal_reached(stars):
     visible = false
 
 

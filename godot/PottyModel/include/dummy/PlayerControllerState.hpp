@@ -7,5 +7,5 @@ class PlayerControllerState
 public:
     Vector2 direction;
 
-    bool pulling;
+    bool pulling = false;
 };

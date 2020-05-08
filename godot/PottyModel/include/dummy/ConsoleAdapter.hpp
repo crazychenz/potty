@@ -15,15 +15,22 @@ public:
         engine.start();
     }
 
-    virtual void goal_reached()
+    virtual void goal_reached(int stars)
     {
         std::wcout << "Goal reached.\r\n";
         engine.next_level();
     }
 
-    virtual void game_beat()
+    virtual void game_beat(int stars)
     {
         std::wcout << "Game Beat.\r\n";
+        std::wcout << "Starting over.\r\n";
+        engine.start_new_game();
+    }
+
+    virtual void game_failed()
+    {
+        std::wcout << "Game Lost.\r\n";
         std::wcout << "Starting over.\r\n";
         engine.start_new_game();
     }
@@ -32,8 +39,7 @@ public:
     virtual void bladder_updated(int value) {}
 
     virtual void on_updated() {}
-    
-    // TODO: Add parameters to this.
+
     virtual void on_updated_precommit(std::unique_ptr<std::vector<Vector2>> simple_moves) {}
 
     virtual void meta_update(std::string &str) {}

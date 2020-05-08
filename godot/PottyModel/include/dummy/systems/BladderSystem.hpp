@@ -18,7 +18,7 @@ public:
     void update(double delta) {
         auto &ctx = registry.ctx<ConsoleEngineContext>();
 
-        if (ctx.player_move_state == PLAYER_MOVE_WAITING_STATE)
+        if (ctx.player_move_state == PLAYER_MOVE_WAITING_STATE && ctx.bladder_paused == false)
         {
             lastBladderInterval += delta;
             if (lastBladderInterval >= bladderInterval)

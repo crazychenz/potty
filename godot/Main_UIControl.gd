@@ -12,6 +12,10 @@ onready var GridOutput = find_node("GridOutput")
 onready var HappinessValue = find_node("HappinessValue")
 onready var BladderValue = find_node("BladderValue")
 
+onready var Star1 = find_node("Star1")
+onready var Star2 = find_node("Star2")
+onready var Star3 = find_node("Star3")
+
 #onready var BladderValue : ProgressBar = find_node("BladderValue")
 #onready var HappinessValue : ProgressBar = find_node("HappinessValue")
 
@@ -23,6 +27,7 @@ func ready(presentation_param):
     presentation.connect("game_beat", self, "_on_game_beat")
     presentation.connect("happiness_updated", self, "_on_happiness_updated")
     presentation.connect("bladder_updated", self, "_on_bladder_updated")
+    presentation.connect("game_failed", self, "_on_game_failed")
 
 
 func _on_happiness_updated(value):
@@ -37,14 +42,43 @@ func _on_timescale_change():
     $Timescale.text = "Time Scale: %s" % Engine.time_scale
 
 
-func _on_game_beat():
+func update_stars(stars):
+    var gold = Color(1.0, 0.79, 0)
+    var grey = Color(0.12, 0.12, 0.12)
+    if stars >= 3:
+        Star1.modulate = gold
+        Star2.modulate = gold
+        Star3.modulate = gold
+    elif stars == 2:
+        Star1.modulate = gold
+        Star2.modulate = gold
+        Star3.modulate = grey
+    elif stars == 1:
+        Star1.modulate = gold
+        Star2.modulate = grey
+        Star3.modulate = grey
+    else:
+        Star1.modulate = grey
+        Star2.modulate = grey
+        Star3.modulate = grey
+
+func _on_game_beat(stars):
     GameOverLabel.text = "Game Complete"
     NextLevelButton.visible = false
+    update_stars(stars)
     $GameOverPanel.set_visible(true)
 
 
-func _on_goal_reached():
+func _on_game_failed():
+    GameOverLabel.text = "Level Failed"
+    NextLevelButton.visible = false
+    update_stars(0)
+    $GameOverPanel.set_visible(true)
+
+
+func _on_goal_reached(stars):
     GameOverLabel.text = "Level Complete"
+    update_stars(stars)
     $GameOverPanel.set_visible(true)
 
 

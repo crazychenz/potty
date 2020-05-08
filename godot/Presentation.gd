@@ -47,14 +47,19 @@ func bladder_updated(value):
     emit_signal("bladder_updated", value)
 
 
+signal game_failed
+func game_failed():
+    emit_signal("game_failed")
+
+
 signal game_beat
-func game_beat():
-    emit_signal("game_beat")
+func game_beat(stars):
+    emit_signal("game_beat", stars)
 
 
 signal goal_reached
-func goal_reached():
-    emit_signal("goal_reached")
+func goal_reached(stars):
+    emit_signal("goal_reached", stars)
 
 func controller_ready(controller_param):
     controller = controller_param

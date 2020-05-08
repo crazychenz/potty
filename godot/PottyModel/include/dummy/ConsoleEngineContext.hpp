@@ -33,6 +33,7 @@ public:
     entt::entity potty;
     entt::entity toddler;
     bool goal_reached = false;
+    bool bladder_paused = true;
     
     int get_happiness()
     {
@@ -70,6 +71,11 @@ public:
         bladder = value;
         engine.bladder_updated(bladder);
         std::wcout << "Bladder: " << bladder << "\r\n"; redraw = true;
+    }
+
+    void pause_bladder(bool value)
+    {
+        bladder_paused = value;
     }
 
     std::list<std::unique_ptr<ITransaction>> new_xaction_list = {};

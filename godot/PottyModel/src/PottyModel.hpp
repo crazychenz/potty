@@ -72,14 +72,19 @@ public:
         engine.next_level();
     }
 
-    virtual void goal_reached()
+    virtual void goal_reached(int stars)
     {
-        emit_signal("goal_reached");
+        emit_signal("goal_reached", stars);
     }
 
-    virtual void game_beat()
+    virtual void game_beat(int stars)
     {
-        emit_signal("game_beat");
+        emit_signal("game_beat", stars);
+    }
+
+    virtual void game_failed()
+    {
+        emit_signal("game_failed");
     }
 
     virtual void happiness_updated(int value)
@@ -127,6 +132,11 @@ public:
         engine.player_pull(value);
     }
 
+    virtual void pause_bladder(bool value)
+    {
+        engine.pause_bladder(value);
+    }
+
     static void _register_methods() {
         godot::register_method("_process", &PottyModel::_process);
         godot::register_method("player_move", &PottyModel::player_move);
@@ -139,10 +149,7 @@ public:
         godot::register_method("currently_playing", &PottyModel::currently_playing);
         godot::register_method("reset_level", &PottyModel::reset_level);
         godot::register_method("next_level", &PottyModel::next_level);
-
-
-
-        godot::register_method("method", &PottyModel::method);
+        godot::register_method("pause_bladder", &PottyModel::pause_bladder);
 
         /**
          * The line below is equivalent to the following GDScript export:
@@ -156,8 +163,9 @@ public:
         /** Registering a signal: **/
         godot::register_signal<PottyModel>("updated");
 
-        godot::register_signal<PottyModel>("goal_reached");
-        godot::register_signal<PottyModel>("game_beat");
+        godot::register_signal<PottyModel>("goal_reached", "stars", GODOT_VARIANT_TYPE_INT);
+        godot::register_signal<PottyModel>("game_beat", "stars", GODOT_VARIANT_TYPE_INT);
+        godot::register_signal<PottyModel>("game_failed");
 
         godot::register_signal<PottyModel>("happiness_updated", "value", GODOT_VARIANT_TYPE_INT);
         godot::register_signal<PottyModel>("bladder_updated", "value", GODOT_VARIANT_TYPE_INT);

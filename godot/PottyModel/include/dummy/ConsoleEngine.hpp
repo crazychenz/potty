@@ -211,16 +211,40 @@ class ConsoleEngine : public IConsoleEngine
         ctx.set_happiness(100);
         ctx.set_bladder(0);
 
-        const Json::Value level = config["levels"][level_idx];
+        const Json::Value layout = config["levels"][level_idx]["layout"];
 
-        for (int y = 0; y < level.size(); ++y)
+        for (int y = 0; y < layout.size(); ++y)
         {
-            const char *row = level[y].asCString();
+            const char *row = layout[y].asCString();
             for (int x = 0; x < std::strlen(row); ++x)
             {
                 generate_ascii_entity(row[x], x, y);
             }
         }
+
+        ctx.pause_bladder(false);
+    }
+
+    int get_current_stars()
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        const Json::Value level = config["levels"][ctx.current_level];
+        if (ctx.get_bladder() < level["3stars"]["bladderLessThan"].asInt() &&
+                ctx.get_happiness() > level["3stars"]["happinessGreaterThan"].asInt())
+        {
+            return 3;
+        }
+        if (ctx.get_bladder() < level["2stars"]["bladderLessThan"].asInt() &&
+                ctx.get_happiness() > level["2stars"]["happinessGreaterThan"].asInt())
+        {
+            return 2;
+        }
+        if (ctx.get_bladder() < level["1stars"]["bladderLessThan"].asInt() &&
+                ctx.get_happiness() > level["1stars"]["happinessGreaterThan"].asInt())
+        {
+            return 1;
+        }
+        return 0;
     }
 
 public:
@@ -272,13 +296,15 @@ public:
         adapter.happiness_updated(value);
     }
 
-    // TODO: Need to support "pause_bladder()" from adapter class
-    // TODO: Need to support losing based on happiness==0 or bladder==100
-    // TODO: Need to grade level completion.
-
     virtual void bladder_updated(int value)
     {
         adapter.bladder_updated(value);
+    }
+
+    virtual void pause_bladder(bool value)
+    {
+        auto &ctx = registry.ctx<ConsoleEngineContext>();
+        ctx.pause_bladder(value);
     }
 
     virtual void start()
@@ -325,6 +351,13 @@ public:
                 "ctx.done_xaction_list.size = " + std::to_string(ctx.done_xaction_list.size()) + "\n";
             adapter.meta_update(meta);
             metaTimeout = 0.001;
+        }
+
+        if (ctx.get_bladder() >= 100 || ctx.get_happiness() <= 0)
+        {
+            ctx.player_move_state = PLAYER_MOVE_GAMEOVER_STATE;
+            adapter.game_failed();
+            return;
         }
 
         #ifdef CONSOLE_BUILD
@@ -404,11 +437,11 @@ public:
             if (ctx.current_level == ctx.last_level)
             {
                 ctx.player_move_state = PLAYER_MOVE_GAMEOVER_STATE;
-                adapter.game_beat();
+                adapter.game_beat(get_current_stars());
                 return;
             }
             ctx.player_move_state = PLAYER_MOVE_LEVELSELECT_STATE;
-            adapter.goal_reached();
+            adapter.goal_reached(get_current_stars());
             return;
         }
 

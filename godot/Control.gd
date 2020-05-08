@@ -16,6 +16,7 @@ func ready(presentation_param, model_param):
     model.connect("updated", self, "_on_model_updated")
     model.connect("updated_precommit", self, "_on_model_updated_precommit")
     model.connect("goal_reached", self, "_on_goal_reached")
+    model.connect("game_failed", self, "_on_game_failed")
     model.connect("game_beat", self, "_on_game_beat")
     model.connect("happiness_updated", self, "_on_happiness_updated")
     model.connect("bladder_updated", self, "_on_bladder_updated")
@@ -25,13 +26,16 @@ func _on_happiness_updated(value) -> void:
     presentation.happiness_updated(value)
 
 func _on_bladder_updated(value) -> void:
-    print("Bladder (Godot): %s" % value)
     presentation.bladder_updated(value)
 
 
-func _on_goal_reached() -> void:
+func _on_game_failed() -> void:
+    presentation.game_failed()
+
+
+func _on_goal_reached(stars) -> void:
     goal_reached = true
-    presentation.goal_reached()
+    presentation.goal_reached(stars)
 
 func _on_MainMenuButton_pressed() -> void:
     if goal_reached == true:
@@ -39,6 +43,7 @@ func _on_MainMenuButton_pressed() -> void:
         # we assume next level.
         PottyModel.next_level()
         goal_reached = false
+    PottyModel.pause_bladder(true)
     g.change_scene("res://Title.tscn")
 
 
@@ -54,8 +59,8 @@ func timescale_up():
     presentation.timescale_change()
     
 
-func _on_game_beat() -> void:
-    presentation.game_beat()
+func _on_game_beat(stars) -> void:
+    presentation.game_beat(stars)
 
 
 func _on_PlayAgainButton_pressed() -> void:

@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://View.gd" type="Script" id=1]
+[ext_resource path="res://assets/star.png" type="Texture" id=2]
 [ext_resource path="res://Control.gd" type="Script" id=3]
 [ext_resource path="res://Main_UIControl.gd" type="Script" id=4]
 [ext_resource path="res://assets/fonts/noto/noto-regular-touchable.tres" type="DynamicFont" id=5]
@@ -34,10 +35,10 @@ __meta__ = {
 
 [node name="GameOverPanel" type="PanelContainer" parent="ViewWidgets"]
 visible = false
-margin_left = 145.0
-margin_top = 111.0
+margin_left = 99.0
+margin_top = 21.0
 margin_right = 574.0
-margin_bottom = 466.0
+margin_bottom = 583.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -45,44 +46,77 @@ __meta__ = {
 [node name="VBoxContainer" type="VBoxContainer" parent="ViewWidgets/GameOverPanel"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 422.0
-margin_bottom = 348.0
+margin_right = 468.0
+margin_bottom = 555.0
 custom_constants/separation = 21
 
+[node name="CenterContainer" type="CenterContainer" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
+margin_right = 461.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ViewWidgets/GameOverPanel/VBoxContainer/CenterContainer"]
+margin_left = 76.0
+margin_right = 384.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Star1" type="TextureRect" parent="ViewWidgets/GameOverPanel/VBoxContainer/CenterContainer/HBoxContainer"]
+modulate = Color( 1, 0.796078, 0, 1 )
+margin_right = 100.0
+margin_bottom = 100.0
+texture = ExtResource( 2 )
+
+[node name="Star2" type="TextureRect" parent="ViewWidgets/GameOverPanel/VBoxContainer/CenterContainer/HBoxContainer"]
+modulate = Color( 0.12549, 0.12549, 0.12549, 1 )
+margin_left = 104.0
+margin_right = 204.0
+margin_bottom = 100.0
+texture = ExtResource( 2 )
+
+[node name="Star3" type="TextureRect" parent="ViewWidgets/GameOverPanel/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_left = 208.0
+margin_right = 308.0
+margin_bottom = 100.0
+texture = ExtResource( 2 )
+
 [node name="MarginContainer" type="MarginContainer" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_right = 415.0
-margin_bottom = 79.0
+margin_top = 121.0
+margin_right = 461.0
+margin_bottom = 200.0
 custom_constants/margin_top = 16
 custom_constants/margin_bottom = 16
 
 [node name="GameOverLabel" type="Label" parent="ViewWidgets/GameOverPanel/VBoxContainer/MarginContainer"]
 margin_top = 16.0
-margin_right = 415.0
+margin_right = 461.0
 margin_bottom = 63.0
 custom_fonts/font = ExtResource( 5 )
 text = "Game Over"
 align = 1
 
 [node name="NextLevelButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_top = 100.0
-margin_right = 415.0
-margin_bottom = 166.0
+margin_top = 221.0
+margin_right = 461.0
+margin_bottom = 316.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
 text = "Next Level"
 
 [node name="PlayAgainButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_top = 187.0
-margin_right = 415.0
-margin_bottom = 253.0
+margin_top = 337.0
+margin_right = 461.0
+margin_bottom = 432.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
 text = "Play Again"
 
 [node name="ReturnButton" type="Button" parent="ViewWidgets/GameOverPanel/VBoxContainer"]
-margin_top = 274.0
-margin_right = 415.0
-margin_bottom = 341.0
+margin_top = 453.0
+margin_right = 461.0
+margin_bottom = 548.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 5 )
 text = "Return To Menu"
@@ -180,6 +214,7 @@ __meta__ = {
 }
 
 [node name="GridOutput" type="RichTextLabel" parent="ViewWidgets"]
+visible = false
 margin_left = 601.0
 margin_top = 370.0
 margin_right = 767.0
@@ -195,13 +230,18 @@ __meta__ = {
 }
 
 [node name="MetaInfo" type="Label" parent="ViewWidgets"]
+visible = false
 margin_left = 597.0
 margin_top = 256.0
 margin_right = 736.0
 margin_bottom = 331.0
 text = "asfsdafdsf"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Timescale" type="Label" parent="ViewWidgets"]
+visible = false
 margin_right = 40.0
 margin_bottom = 14.0
 
